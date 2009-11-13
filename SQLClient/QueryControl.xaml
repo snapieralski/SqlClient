@@ -3,9 +3,56 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:dg="clr-namespace:Microsoft.Windows.Controls;assembly=WPFToolkit" 
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="500">
+    <UserControl.Resources>
+        <Style x:Key="disabledImageStyle" TargetType="{x:Type Image}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}, AncestorLevel=1}, Path=IsEnabled}" Value="False">
+                    <Setter Property="Opacity" Value="0.2"></Setter>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="toolbarButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="Margin" Value="0 0 5 0" />
+        </Style>
+    </UserControl.Resources>
+    
     <Grid>
-            
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="200" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="25" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <ToolBarTray Grid.Row="0" >
+            <ToolBar Band="1" BandIndex="1" Height="30">
+                <Button Click="HandleRun" Style="{StaticResource toolbarButtonStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="Resources/play.png" />
+                        <TextBlock VerticalAlignment="Center">Run</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Name="_cancelButton" Click="HandleCancel" Style="{StaticResource toolbarButtonStyle}" IsEnabled="False">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="Resources/cancel.png" Style="{StaticResource disabledImageStyle}" />
+                        <TextBlock VerticalAlignment="Center">Cancel</TextBlock>
+                    </StackPanel>
+                </Button>
+            </ToolBar>
+        </ToolBarTray>
+        <TextBox Name="_queryTextBox" FontFamily="Courier New" FontSize="12" Grid.Row="1" KeyUp="HandleQueryBoxKey"  />
+        <GridSplitter ResizeDirection="Rows"  Grid.Row="2" Width="Auto" Height="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0"  />
+        <dg:DataGrid x:Name="_resultsGrid" ItemsSource="{Binding}" Grid.Row="3" Grid.Column="1" />
+        <StatusBar Grid.Row="4" Grid.ColumnSpan="2" >
+            <TextBlock Width="200" Name="_statusText" />
+            <ProgressBar Height="20" Width="100" Name="_statusProgress" />
+        </StatusBar>
     </Grid>
 </UserControl>

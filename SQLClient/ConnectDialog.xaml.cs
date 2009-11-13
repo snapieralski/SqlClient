@@ -53,6 +53,12 @@ namespace SQLClient
             }
         }
 
+        public string Name {
+            get {
+                return _nameTextBox.Text;
+            }
+        }
+
         public ConnectDialog()
         {
             InitializeComponent();
