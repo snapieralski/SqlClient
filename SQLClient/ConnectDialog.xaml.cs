@@ -60,11 +60,13 @@ namespace SQLClient
 
         private void HandleConnectionSelected(object sender, SelectionChangedEventArgs e) {
             ConnectionInfo info = (ConnectionInfo)_savedConnectionsListBox.SelectedValue;
-            if (info != null)
-            {
+            if (info != null) {
                 _passwordTextBox.Text = info.Password;
                 _serverTextBox.Text = info.Server;
-                _serverTypeComboBox.SelectedValue = info.Type;
+                foreach (ComboBoxItem item in _serverTypeComboBox.Items) {
+                    item.IsSelected = item.Content.ToString() == info.Type;
+                }
+
                 _usernameTextBox.Text = info.Username;
                 _nameTextBox.Text = info.Name;
                 _initCatalogTextBox.Text = info.InitialCatalog;

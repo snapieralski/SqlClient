@@ -62,7 +62,7 @@ namespace SQLClient.DBInteraction
                 OracleCommand cmd = new OracleCommand();
                 cmd.Connection = _conn;
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = string.Format("select object_name from user_objects where object_type = 'COLUMN' order by object_name", parentName);
+                cmd.CommandText = string.Format("select column_name || ' ' || data_type || '(' || data_length || ')' from user_tab_columns where table_name = '{0}'", parentName);
 
                 OracleDataReader reader = cmd.ExecuteReader();
 

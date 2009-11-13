@@ -30,5 +30,9 @@ namespace SQLClient
             }
             return result;
         }
+
+        public override int GetHashCode() {
+            return Name.GetHashCode();
+        }
     }
 }
