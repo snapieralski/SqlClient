@@ -53,7 +53,7 @@ namespace SQLClient
             }
         }
 
-        public string Name {
+        public string ConnectionName {
             get {
                 return _nameTextBox.Text;
             }
@@ -105,7 +105,7 @@ namespace SQLClient
         {
             ConnectionInfo info = new ConnectionInfo();
             info.InitialCatalog = InitialCatalog;
-            info.Name = _nameTextBox.Text; 
+            info.Name = ConnectionName; 
             info.Password = Password;
             info.Server = ServerUrl;
             info.Type = ServerType;
@@ -159,6 +159,12 @@ namespace SQLClient
                 _savedConnections = new ObservableCollection<ConnectionInfo>();
             }
             _savedConnectionsListBox.DataContext = _savedConnections;
+        }
+
+        private void HandleDblClick(object sender, MouseButtonEventArgs e) {
+            if( _savedConnectionsListBox.SelectedIndex >= 0) {
+                DialogResult = true;
+            }
         }
     }
 }
