@@ -93,7 +93,7 @@ namespace SQLClient {
 
                 TabItem tab = new TabItem();
                 TextBlock headerText = new TextBlock();
-                headerText.Text = dialog.Name;
+                headerText.Text = dialog.ConnectionName;
                 tab.Header = headerText;
 
                 QueryControl queryCtrl = new QueryControl();

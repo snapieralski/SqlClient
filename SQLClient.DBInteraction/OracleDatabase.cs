@@ -88,8 +88,23 @@ namespace SQLClient.DBInteraction
             try {
                 _conn.Open();
 
-                OracleDataAdapter dataAdapter = new OracleDataAdapter(query, _conn);
-                dataAdapter.Fill(result);
+                if (query.ToUpperInvariant().StartsWith("INSERT") || query.ToUpperInvariant().StartsWith("UPDATE") || query.ToUpperInvariant().StartsWith("DELETE")) {
+                    OracleCommand cmd = new OracleCommand(query, _conn);
+                    int itemsAffected = cmd.ExecuteNonQuery();
+                    result.Tables.Add("Update");
+                    result.Tables[0].Columns.Add("Info");
+                    result.Tables[0].Rows.Add(itemsAffected + " rows affected");
+                } else {
+                    OracleDataAdapter dataAdapter = new OracleDataAdapter(query, _conn);
+                    dataAdapter.Fill(result);
+
+                    // if we didn't get any data back
+                    if (result.Tables.Count <= 0) {
+                        result.Tables.Add("Info");
+                        result.Tables[0].Columns.Add("Info");
+                        result.Tables[0].Rows.Add("Query executed successfully but no results were returned.");
+                    }
+                } 
 
             } catch(OracleException oe) {
                 result.Tables.Add("Error");
