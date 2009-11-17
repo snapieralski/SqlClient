@@ -73,20 +73,9 @@ namespace SQLClient {
 
             if (dialog.ShowDialog().GetValueOrDefault(false)) {
                 if (dialog.ServerType == "Oracle") {
-                    OracleConnectionStringBuilder connStrBuilder = new OracleConnectionStringBuilder();
-                    connStrBuilder.DataSource = dialog.ServerUrl;
-                    connStrBuilder.UserID = dialog.Username;
-                    connStrBuilder.Password = dialog.Password;
-                    connStrBuilder.IntegratedSecurity = false;
-                    _db = new OracleDatabase(connStrBuilder.ConnectionString);
+                    _db = new OracleDatabase(dialog.ConnectionString);
                 } else if (dialog.ServerType == "SQL Server") {
-                    SqlConnectionStringBuilder connStrBuilder = new SqlConnectionStringBuilder();
-                    connStrBuilder.DataSource = dialog.ServerUrl;
-                    connStrBuilder.InitialCatalog = dialog.InitialCatalog;
-                    connStrBuilder.UserID = dialog.Username;
-                    connStrBuilder.Password = dialog.Password;
-                    connStrBuilder.IntegratedSecurity = false;
-                    _db = new SqlDatabase(connStrBuilder.ConnectionString);
+                    _db = new SqlDatabase(dialog.ConnectionString);
                 } else {
                     throw new ApplicationException("Unable to connect to DB Type: '" + dialog.ServerType + "'");
                 }

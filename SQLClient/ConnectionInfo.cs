@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.OracleClient;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 
@@ -14,6 +16,38 @@ namespace SQLClient
         public string Username { get; set; }
         public string Password { get; set; }
         public string Type { get; set; }
+
+        public string ConnectionString
+        {
+            get
+            {
+                string connString;
+                if (Type == "Oracle")
+                {
+                    OracleConnectionStringBuilder connStrBuilder = new OracleConnectionStringBuilder();
+                    connStrBuilder.DataSource = Server;
+                    connStrBuilder.UserID = Username;
+                    connStrBuilder.Password = Password;
+                    connStrBuilder.IntegratedSecurity = false;
+
+                    connString = connStrBuilder.ConnectionString;
+                }
+                else if (Type == "SQL Server")
+                {
+                    SqlConnectionStringBuilder connStrBuilder = new SqlConnectionStringBuilder();
+                    connStrBuilder.DataSource = Server;
+                    connStrBuilder.InitialCatalog = InitialCatalog;
+                    connStrBuilder.UserID = Username;
+                    connStrBuilder.Password = Password;
+                    connStrBuilder.IntegratedSecurity = false;
+
+                    connString = connStrBuilder.ConnectionString;
+                } else {
+                    throw new ApplicationException("Unknown server type: " + Type);
+                }
+                return connString;
+            }
+        }
 
         public override string ToString()
         {

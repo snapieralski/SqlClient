@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -16,31 +15,36 @@ using System.Windows.Shapes;
 namespace SQLClient.ConnectUI
 {
     /// <summary>
-    /// Interaction logic for OracleConnectionControl.xaml
+    /// Interaction logic for SqlServerConnectionControl.xaml
     /// </summary>
-    public partial class OracleConnectionControl : UserControl, IConnectionControl
+    public partial class SqlServerConnectionControl : UserControl, IConnectionControl
     {
-        public OracleConnectionControl()
+        public SqlServerConnectionControl()
         {
             InitializeComponent();
         }
 
 
+
         public ConnectionInfo ConnectionInfo
         {
-            get {
+            get
+            {
                 ConnectionInfo info = new ConnectionInfo();
                 info.Server = _serverTextBox.Text;
+                info.InitialCatalog = _initialCatalogTextBox.Text;
                 info.Username = _usernameTextBox.Text;
                 info.Password = _passwordTextBox.Text;
-                info.Type = "Oracle";
+                info.Type = "SQL Server";
 
                 return info;
             }
-            set {
+            set
+            {
                 _serverTextBox.Text = value.Server;
                 _usernameTextBox.Text = value.Username;
                 _passwordTextBox.Text = value.Password;
+                _initialCatalogTextBox.Text = value.InitialCatalog;
             }
         }
     }

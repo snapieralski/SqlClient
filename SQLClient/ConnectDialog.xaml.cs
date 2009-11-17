@@ -14,6 +14,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
+using SQLClient.ConnectUI;
+
 namespace SQLClient
 {
     /// <summary>
@@ -22,34 +24,11 @@ namespace SQLClient
     public partial class ConnectDialog : Window
     {
         private ObservableCollection<ConnectionInfo> _savedConnections;
+        private ConnectUI.IConnectionControl _connCtrl;
 
         public string ServerType {
             get {
                 return ((ComboBoxItem) _serverTypeComboBox.SelectedItem).Content.ToString();
-            }
-        }
-
-        public string ServerUrl {
-            get {
-                return _serverTextBox.Text;
-            }
-        }
-
-        public string Username {
-            get {
-                return _usernameTextBox.Text;
-            }
-        }
-
-        public string Password {
-            get {
-                return _passwordTextBox.Text;
-            }
-        }
-
-        public string InitialCatalog {
-            get {
-                return _initCatalogTextBox.Text;
             }
         }
 
@@ -59,23 +38,49 @@ namespace SQLClient
             }
         }
 
+        public string ConnectionString
+        {
+            get
+            {
+                return _connCtrl.ConnectionInfo.ConnectionString;
+            }
+        }
+
         public ConnectDialog()
         {
             InitializeComponent();
         }
 
+        private void HandleTypeSelected(object sender, SelectionChangedEventArgs e)
+        {
+            _connCtrlPanel.Children.Clear();
+            if (ServerType == "Oracle")
+            {
+                _connCtrl = new OracleConnectionControl();
+                
+            }
+            else if (ServerType == "SQL Server")
+            {
+                _connCtrl = new SqlServerConnectionControl();
+            }
+            else 
+            {
+                throw new ArgumentException("Unrecognized type: " + ServerType);
+            }
+            _connCtrlPanel.Children.Add((UIElement)_connCtrl);
+            ConnectionInfo info = (ConnectionInfo)_savedConnectionsListBox.SelectedValue;
+            if (info != null)
+            {
+                _connCtrl.ConnectionInfo = info;
+            }
+        }
+
         private void HandleConnectionSelected(object sender, SelectionChangedEventArgs e) {
             ConnectionInfo info = (ConnectionInfo)_savedConnectionsListBox.SelectedValue;
             if (info != null) {
-                _passwordTextBox.Text = info.Password;
-                _serverTextBox.Text = info.Server;
                 foreach (ComboBoxItem item in _serverTypeComboBox.Items) {
                     item.IsSelected = item.Content.ToString() == info.Type;
                 }
-
-                _usernameTextBox.Text = info.Username;
-                _nameTextBox.Text = info.Name;
-                _initCatalogTextBox.Text = info.InitialCatalog;
             }
         }
 
@@ -103,14 +108,9 @@ namespace SQLClient
 
         private void HandleSave(object sender, RoutedEventArgs e)
         {
-            ConnectionInfo info = new ConnectionInfo();
-            info.InitialCatalog = InitialCatalog;
+            ConnectionInfo info = _connCtrl.ConnectionInfo;
             info.Name = ConnectionName; 
-            info.Password = Password;
-            info.Server = ServerUrl;
-            info.Type = ServerType;
-            info.Username = Username;
-
+            
             if (!_savedConnections.Contains(info))
             {
                 _savedConnections.Add(info);

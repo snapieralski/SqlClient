@@ -87,8 +87,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ConnectUI\IConnectionControl.cs" />
     <Compile Include="ConnectUI\OracleConnectionControl.xaml.cs">
       <DependentUpon>OracleConnectionControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ConnectUI\SqlServerConnectionControl.xaml.cs">
+      <DependentUpon>SqlServerConnectionControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="QueryControl.xaml.cs">
       <DependentUpon>QueryControl.xaml</DependentUpon>
@@ -100,6 +104,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ConnectUI\OracleConnectionControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ConnectUI\SqlServerConnectionControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
