@@ -106,11 +106,11 @@ namespace SQLClient {
         }
 
         private void HandleTabClosing(object sender, RoutedEventArgs e) {
-            Button clickedButton = (Button) sender;
+            DependencyObject clickedButton = (DependencyObject)sender;
 
             TabItem itemToRemove = null;
             foreach(TabItem item in _tabs.Items) {
-                if( clickedButton.IsDescendantOf(item)) {
+                if( item.IsAncestorOf(clickedButton)) {
                     itemToRemove = item;
                     break;
                 }
