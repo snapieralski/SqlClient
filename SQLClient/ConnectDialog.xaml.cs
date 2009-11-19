@@ -26,8 +26,12 @@ namespace SQLClient
         private ObservableCollection<ConnectionInfo> _savedConnections;
         private ConnectUI.IConnectionControl _connCtrl;
 
-        public string ServerType {
+        private string ServerType {
             get {
+                if (_serverTypeComboBox.SelectedItem == null)
+                {
+                    return string.Empty;
+                }
                 return ((ComboBoxItem) _serverTypeComboBox.SelectedItem).Content.ToString();
             }
         }
@@ -38,11 +42,13 @@ namespace SQLClient
             }
         }
 
-        public string ConnectionString
+        public ConnectionInfo ConnectionInfo
         {
             get
             {
-                return _connCtrl.ConnectionInfo.ConnectionString;
+                ConnectionInfo info = _connCtrl.ConnectionInfo;
+                info.Name = ConnectionName;
+                return info;
             }
         }
 
@@ -53,25 +59,29 @@ namespace SQLClient
 
         private void HandleTypeSelected(object sender, SelectionChangedEventArgs e)
         {
-            _connCtrlPanel.Children.Clear();
-            if (ServerType == "Oracle")
+            if (_connCtrlPanel != null)
             {
-                _connCtrl = new OracleConnectionControl();
-                
-            }
-            else if (ServerType == "SQL Server")
-            {
-                _connCtrl = new SqlServerConnectionControl();
-            }
-            else 
-            {
-                throw new ArgumentException("Unrecognized type: " + ServerType);
-            }
-            _connCtrlPanel.Children.Add((UIElement)_connCtrl);
-            ConnectionInfo info = (ConnectionInfo)_savedConnectionsListBox.SelectedValue;
-            if (info != null)
-            {
-                _connCtrl.ConnectionInfo = info;
+                _connCtrlPanel.Children.Clear();
+                if (ServerType == "Oracle")
+                {
+                    _connCtrl = new OracleConnectionControl();
+
+                }
+                else if (ServerType == "SQL Server")
+                {
+                    _connCtrl = new SqlServerConnectionControl();
+                }
+                else
+                {
+                    return;
+                }
+                _connCtrlPanel.Children.Add((UIElement)_connCtrl);
+                ConnectionInfo info = (ConnectionInfo)_savedConnectionsListBox.SelectedValue;
+                if (info != null)
+                {
+                    _connCtrl.ConnectionInfo = info;
+                    _nameTextBox.Text = info.Name;
+                }
             }
         }
 

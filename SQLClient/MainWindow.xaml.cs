@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -17,6 +18,12 @@ namespace SQLClient {
     /// </summary>
     public partial class MainWindow : Window {
         private IDatabase _db;
+
+        private ObservableCollection<ConnectionInfo> ActiveConnections
+        {
+            get;
+            set;
+        }
 
         public MainWindow() {
             InitializeComponent();
@@ -72,12 +79,13 @@ namespace SQLClient {
             ConnectDialog dialog = new ConnectDialog();
 
             if (dialog.ShowDialog().GetValueOrDefault(false)) {
-                if (dialog.ServerType == "Oracle") {
-                    _db = new OracleDatabase(dialog.ConnectionString);
-                } else if (dialog.ServerType == "SQL Server") {
-                    _db = new SqlDatabase(dialog.ConnectionString);
+                ConnectionInfo info = dialog.ConnectionInfo;
+                if (info.Type == "Oracle") {
+                    _db = new OracleDatabase(info.ConnectionString);
+                } else if (info.Type == "SQL Server") {
+                    _db = new SqlDatabase(info.ConnectionString);
                 } else {
-                    throw new ApplicationException("Unable to connect to DB Type: '" + dialog.ServerType + "'");
+                    throw new ApplicationException("Unable to connect to DB Type: '" + info.Type + "'");
                 }
 
                 TabItem tab = new TabItem();
@@ -91,6 +99,9 @@ namespace SQLClient {
 
                 _tabs.Items.Add(tab);
                 _tabs.SelectedItem = tab;
+
+                ActiveConnections.Add(info);
+                // TODO: add standard items below server item
             }
         }
 
@@ -108,6 +119,12 @@ namespace SQLClient {
                 _tabs.Items.Remove(itemToRemove);
             }
             
+        }
+
+        private void HandleLoad(object sender, RoutedEventArgs e)
+        {
+            ActiveConnections = new ObservableCollection<ConnectionInfo>();
+            _navigatorTree.DataContext = ActiveConnections;
         }
     }
 }
