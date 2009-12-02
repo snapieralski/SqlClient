@@ -50,7 +50,7 @@
         </ToolBarTray>
         <TextBox Name="_queryTextBox" FontFamily="Courier New" FontSize="12" Grid.Row="1" KeyUp="HandleQueryBoxKey" AcceptsReturn="True" AcceptsTab="True" AutoWordSelection="True" />
         <GridSplitter ResizeDirection="Rows"  Grid.Row="2" Width="Auto" Height="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0"  />
-        <dg:DataGrid x:Name="_resultsGrid" ItemsSource="{Binding}" Grid.Row="3" Grid.Column="1" AlternatingRowBackground="#FFDEDEFC" />
+        <dg:DataGrid x:Name="_resultsGrid" ItemsSource="{Binding}" Grid.Row="3" Grid.Column="1" AlternatingRowBackground="#FFDEDEFC" LoadingRow="HandleLoadingRow" />
         <StatusBar Grid.Row="4" Grid.ColumnSpan="2" >
             <TextBlock Width="200" Name="_statusText" />
             <ProgressBar Height="20" Width="100" Name="_statusProgress" />

@@ -94,9 +94,8 @@ namespace SQLClient {
 
         private void HandleCancel(object sender, RoutedEventArgs e) {
             Button button = (Button)sender;
-            if (button.IsEnabled) {
-                _queryWorker.CancelAsync();
-            }
+            
+            _queryWorker.CancelAsync();
         }
 
         private bool VerifyConnection() {
@@ -131,6 +130,15 @@ namespace SQLClient {
 
                 _queryTextBox.Text = File.ReadAllText(filename);
             } 
+        }
+
+        /// <summary>
+        /// Puts line numbers in the row header
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void HandleLoadingRow(object sender, Microsoft.Windows.Controls.DataGridRowEventArgs e) {
+            e.Row.Header = e.Row.GetIndex() + 1;
         }
     }
 }

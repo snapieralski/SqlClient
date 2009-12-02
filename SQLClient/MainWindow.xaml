@@ -99,7 +99,7 @@
         </TreeView>
         <GridSplitter Width="3" Grid.RowSpan="3" Grid.Row="1" />
         <TabControl Name="_tabs" Grid.Row="1" Grid.Column="1" >
-            <TabItem Header="Welcome" />
+            <TabItem Name="_welcomeTab" Header="Welcome" />
         </TabControl>
     </Grid>
 </Window>

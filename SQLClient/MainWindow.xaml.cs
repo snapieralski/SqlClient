@@ -88,6 +88,9 @@ namespace SQLClient {
                     throw new ApplicationException("Unable to connect to DB Type: '" + info.Type + "'");
                 }
 
+                // get rid of the 'Welcome' tab -- has no effect if we've already removed it
+                _tabs.Items.Remove(_welcomeTab);
+
                 TabItem tab = new TabItem();
                 TextBlock headerText = new TextBlock();
                 headerText.Text = dialog.ConnectionName;
