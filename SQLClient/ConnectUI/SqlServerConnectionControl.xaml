@@ -11,18 +11,24 @@
             <RowDefinition Height="25" />
             <RowDefinition Height="25" />
             <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="120" />
             <ColumnDefinition Width="375" />
         </Grid.ColumnDefinitions>
-        <Label Grid.Row="0" Grid.RowSpan="2">Server:</Label>
-        <TextBox Grid.Column="1" Grid.Row="0" Name="_serverTextBox" />
-        <Label Grid.Row="1">Initial Catalog:</Label>
-        <TextBox Grid.Column="1" Grid.Row="1" Name="_initialCatalogTextBox" />
-        <Label Grid.Row="2">Username:</Label>
-        <TextBox Grid.Column="1" Grid.Row="2" Name="_usernameTextBox" />
-        <Label Grid.Row="3">Password:</Label>
-        <TextBox Grid.Column="1" Grid.Row="3" Name="_passwordTextBox" />  
+        <Label Grid.Row="0">Server:</Label>
+		<StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+			<RadioButton GroupName="CredentialTypes" Name="_ssAuthCheckBox">SQL Server</RadioButton>
+			<RadioButton GroupName="CredentialTypes" Name="_integratedAuthCheckBox">Integrated</RadioButton>
+		</StackPanel>
+        <Label Grid.Row="1">Server:</Label>
+        <TextBox Grid.Column="1" Grid.Row="1" Name="_serverTextBox" />
+        <Label Grid.Row="2">Initial Catalog:</Label>
+        <TextBox Grid.Column="1" Grid.Row="2" Name="_initialCatalogTextBox" />
+        <Label Grid.Row="3">Username:</Label>
+        <TextBox Grid.Column="1" Grid.Row="3" Name="_usernameTextBox" />
+        <Label Grid.Row="4">Password:</Label>
+        <TextBox Grid.Column="1" Grid.Row="4" Name="_passwordTextBox" />  
     </Grid>
 </UserControl>

@@ -24,19 +24,22 @@ namespace SQLClient.ConnectUI
             InitializeComponent();
         }
 
-
-
         public ConnectionInfo ConnectionInfo
         {
             get
             {
-                ConnectionInfo info = new ConnectionInfo();
-                info.Server = _serverTextBox.Text;
-                info.InitialCatalog = _initialCatalogTextBox.Text;
-                info.Username = _usernameTextBox.Text;
-                info.Password = _passwordTextBox.Text;
-                info.Type = "SQL Server";
+				ConnectionInfo info = new ConnectionInfo();
+				info.Server = _serverTextBox.Text;
+		        info.InitialCatalog = _initialCatalogTextBox.Text;
+		        info.Type = "SQL Server";    
 
+				if( _integratedAuthCheckBox.Checked ) {
+
+				} else {
+		            info.Username = _usernameTextBox.Text;
+		            info.Password = _passwordTextBox.Text;
+		            
+				}
                 return info;
             }
             set
@@ -47,5 +50,6 @@ namespace SQLClient.ConnectUI
                 _initialCatalogTextBox.Text = value.InitialCatalog;
             }
         }
+
     }
 }
