@@ -160,12 +160,16 @@ namespace SQLClient {
         }
 
         private void HandleSave(object sender, RoutedEventArgs e) {
+            SaveBuffer();
+        }
+
+        private void SaveBuffer() {
             SaveFileDialog saveDialog = new SaveFileDialog();
             saveDialog.FileName = "Query";
             saveDialog.DefaultExt = ".sql";
             saveDialog.Filter = "SQL documents (.sql)|*.sql|All Files (*.*)|*";
             bool? result = saveDialog.ShowDialog();
-            if( result == true) {
+            if (result == true) {
                 string filename = saveDialog.FileName;
 
                 File.WriteAllText(filename, _queryTextBox.Text);
@@ -191,6 +195,12 @@ namespace SQLClient {
         /// <param name="e"></param>
         private void HandleLoadingRow(object sender, Microsoft.Windows.Controls.DataGridRowEventArgs e) {
             e.Row.Header = e.Row.GetIndex() + 1;
+        }
+
+        private void HandleKey(object sender, KeyEventArgs e) {
+            if (e.Key == Key.S && Keyboard.Modifiers == ModifierKeys.Control) {
+                SaveBuffer();
+            }
         }
     }
 }

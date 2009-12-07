@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:dg="clr-namespace:Microsoft.Windows.Controls;assembly=WPFToolkit" 
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="500">
+             d:DesignHeight="300" d:DesignWidth="500" KeyDown="HandleKey">
     <UserControl.Resources>
         <Style x:Key="disabledImageStyle" TargetType="{x:Type Image}">
             <Style.Triggers>
