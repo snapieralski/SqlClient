@@ -121,16 +121,14 @@ namespace SQLClient
             ConnectionInfo info = _connCtrl.ConnectionInfo;
             info.Name = ConnectionName; 
             
-            if (!_savedConnections.Contains(info))
+            if (_savedConnections.Contains(info))
             {
-                _savedConnections.Add(info);
-                SaveConnectionInfo();
+                _savedConnections.Remove(info);
             }
-            else
-            {
-                MessageBox.Show(string.Format("There is already a connection named '{0}'", _nameTextBox.Text), "Cannot Add Connection", MessageBoxButton.OK, MessageBoxImage.Stop);  
-            }
-            // TODO: implement edit -- can't search by name -- what happens when we change name?
+            _savedConnections.Add(info);
+            SaveConnectionInfo();
+
+            // TODO: implement ability to change name
         }
 
         private void SaveConnectionInfo()
@@ -175,6 +173,11 @@ namespace SQLClient
             if( _savedConnectionsListBox.SelectedIndex >= 0) {
                 DialogResult = true;
             }
+        }
+
+        private void HandleNew(object sender, RoutedEventArgs e) {
+            _serverTypeComboBox.SelectedItem = null;
+            _nameTextBox.Text = string.Empty;
         }
     }
 }

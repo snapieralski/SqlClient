@@ -19,12 +19,6 @@ namespace SQLClient {
     public partial class MainWindow : Window {
         private IDatabase _db;
 
-        private ObservableCollection<ConnectionInfo> ActiveConnections
-        {
-            get;
-            set;
-        }
-
         public MainWindow() {
             InitializeComponent();
         }
@@ -36,43 +30,6 @@ namespace SQLClient {
                 return false;
             }
             return true;
-        }
-
-
-        private void HandleNavigationExpanded(object sender, RoutedEventArgs e) {
-            TreeViewItem expandedItem = (TreeViewItem) sender;
-            
-            if (VerifyConnection() && !expandedItem.HasItems) {
-                ForceCursor = true;
-                Cursor = Cursors.Wait;
-                List<string> objectsToAdd = null;
-                string tag = null;
-                if (expandedItem.Name == "_tablesTreeItem") {
-                    objectsToAdd = _db.GetTables();
-                    tag = "hasColumns";
-                } else if (expandedItem.Name == "_viewsTreeItem") {
-                    objectsToAdd = _db.GetViews();
-                    tag = "hasColumns";
-                } else if (expandedItem.Name == "_procsTreeItem") {
-                    objectsToAdd = _db.GetProcedures();
-                } else if (expandedItem.Tag != null && expandedItem.Tag.Equals("hasColumns")) {
-                    objectsToAdd = _db.GetColumns(tag);
-                    tag = expandedItem.Header.ToString();
-                } else {
-                    Cursor = null;
-                    return;
-                }
-
-                foreach (string objectName in objectsToAdd) {
-                    TreeViewItem newItem = new TreeViewItem();
-                    newItem.Header = objectName;
-                    newItem.Expanded += HandleNavigationExpanded;
-                    newItem.Tag = tag;
-
-                    expandedItem.Items.Add(newItem);
-                }
-            }
-            Cursor = null;
         }
 
         private void HandleConnect(object sender, RoutedEventArgs e) {
@@ -102,9 +59,6 @@ namespace SQLClient {
 
                 _tabs.Items.Add(tab);
                 _tabs.SelectedItem = tab;
-
-                ActiveConnections.Add(info);
-                // TODO: add standard items below server item
             }
         }
 
@@ -126,8 +80,7 @@ namespace SQLClient {
 
         private void HandleLoad(object sender, RoutedEventArgs e)
         {
-            ActiveConnections = new ObservableCollection<ConnectionInfo>();
-            _navigatorTree.DataContext = ActiveConnections;
+            
         }
     }
 }

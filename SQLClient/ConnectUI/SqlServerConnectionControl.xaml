@@ -19,16 +19,16 @@
         </Grid.ColumnDefinitions>
         <Label Grid.Row="0">Server:</Label>
 		<StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
-			<RadioButton GroupName="CredentialTypes" Name="_ssAuthCheckBox">SQL Server</RadioButton>
-			<RadioButton GroupName="CredentialTypes" Name="_integratedAuthCheckBox">Integrated</RadioButton>
+			<RadioButton GroupName="CredentialTypes" Name="_ssAuthCheckBox" Checked="HandleTypeChanged">SQL Server</RadioButton>
+			<RadioButton GroupName="CredentialTypes" Name="_integratedAuthCheckBox" IsChecked="True" Checked="HandleTypeChanged">Integrated</RadioButton>
 		</StackPanel>
         <Label Grid.Row="1">Server:</Label>
         <TextBox Grid.Column="1" Grid.Row="1" Name="_serverTextBox" />
         <Label Grid.Row="2">Initial Catalog:</Label>
         <TextBox Grid.Column="1" Grid.Row="2" Name="_initialCatalogTextBox" />
         <Label Grid.Row="3">Username:</Label>
-        <TextBox Grid.Column="1" Grid.Row="3" Name="_usernameTextBox" />
+        <TextBox Grid.Column="1" Grid.Row="3" Name="_usernameTextBox" IsEnabled="False" />
         <Label Grid.Row="4">Password:</Label>
-        <TextBox Grid.Column="1" Grid.Row="4" Name="_passwordTextBox" />  
+        <TextBox Grid.Column="1" Grid.Row="4" Name="_passwordTextBox" IsEnabled="False" />  
     </Grid>
 </UserControl>

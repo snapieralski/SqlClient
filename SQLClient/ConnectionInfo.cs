@@ -37,9 +37,13 @@ namespace SQLClient
                     SqlConnectionStringBuilder connStrBuilder = new SqlConnectionStringBuilder();
                     connStrBuilder.DataSource = Server;
                     connStrBuilder.InitialCatalog = InitialCatalog;
-                    connStrBuilder.UserID = Username;
-                    connStrBuilder.Password = Password;
-                    connStrBuilder.IntegratedSecurity = false;
+                    if (connStrBuilder.UserID == "IntegratedAuthentication") {
+                        connStrBuilder.IntegratedSecurity = true;
+                    } else {
+                        connStrBuilder.UserID = Username;
+                        connStrBuilder.Password = Password;
+                        connStrBuilder.IntegratedSecurity = false;
+                    }
 
                     connString = connStrBuilder.ConnectionString;
                 } else {

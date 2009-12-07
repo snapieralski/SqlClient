@@ -29,6 +29,12 @@
         <WrapPanel Name="_connCtrlPanel" Grid.Row="3" Grid.ColumnSpan="2" />
 
         <WrapPanel Grid.Row="4" Grid.Column="1" Margin="0 5 0 0" HorizontalAlignment="Right">
+            <Button Name="_newButton" Width="70" Margin="5 0 0 0" Click="HandleNew">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="Resources/new.png" />
+                    <TextBlock Margin="3 0 0 0">New</TextBlock>
+                </StackPanel>
+            </Button>
             <Button Name="_saveButton" Width="70" Margin="5 0 0 0" Click="HandleSave">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="Resources/save.png" />

@@ -29,9 +29,10 @@
             <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <ToolBarTray Grid.Row="0" >
+        <ToolBarTray Grid.Row="0" Grid.Column="1">
             <ToolBar Band="1" BandIndex="1" Height="30">
                 <Button ToolTip="Save" Click="HandleSave" Style="{StaticResource toolbarButtonStyle}">
                     <Image Source="Resources/save.png" />
@@ -48,10 +49,37 @@
                 </Button>
             </ToolBar>
         </ToolBarTray>
-        <TextBox Name="_queryTextBox" FontFamily="Courier New" FontSize="12" Grid.Row="1" KeyUp="HandleQueryBoxKey" AcceptsReturn="True" AcceptsTab="True" AutoWordSelection="True" />
-        <GridSplitter ResizeDirection="Rows"  Grid.Row="2" Width="Auto" Height="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0"  />
+        <TreeView Name="_navigatorTree" Grid.Column="0" Grid.RowSpan="5" Grid.Row="0">
+            <TreeViewItem Name="_tablesTreeItem" Expanded="HandleNavigationExpanded">
+                <TreeViewItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="Resources/table.png" Margin="0 0 3 0" />
+                        <TextBlock Text="Tables"></TextBlock>
+                    </StackPanel>
+                </TreeViewItem.Header>
+            </TreeViewItem>
+            <TreeViewItem Name="_viewsTreeItem">
+                <TreeViewItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="Resources/view.png" Margin="0 0 3 0" />
+                        <TextBlock Text="Views"></TextBlock>
+                    </StackPanel>
+                </TreeViewItem.Header>
+            </TreeViewItem>
+            <TreeViewItem Name="_procsTreeItem">
+                <TreeViewItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="Resources/procedure.png" Width="16" Margin="0 0 3 0" />
+                        <TextBlock Text="Stored Procedures"></TextBlock>
+                    </StackPanel>
+                </TreeViewItem.Header></TreeViewItem>
+        </TreeView>
+        <GridSplitter Width="3" Grid.RowSpan="5" Grid.Row="0" />
+
+        <TextBox Name="_queryTextBox" FontFamily="Courier New" FontSize="12" Grid.Row="1" Grid.Column="1" KeyUp="HandleQueryBoxKey" AcceptsReturn="True" AcceptsTab="True" AutoWordSelection="True" />
+        <GridSplitter ResizeDirection="Rows"  Grid.Row="2" Grid.Column="1" Width="Auto" Height="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0"  />
         <dg:DataGrid x:Name="_resultsGrid" ItemsSource="{Binding}" Grid.Row="3" Grid.Column="1" AlternatingRowBackground="#FFDEDEFC" LoadingRow="HandleLoadingRow" />
-        <StatusBar Grid.Row="4" Grid.ColumnSpan="2" >
+        <StatusBar Grid.Row="4" Grid.Column="1" >
             <TextBlock Width="200" Name="_statusText" />
             <ProgressBar Height="20" Width="100" Name="_statusProgress" />
         </StatusBar>

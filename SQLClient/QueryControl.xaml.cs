@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.OracleClient;
@@ -105,6 +106,42 @@ namespace SQLClient {
                 return false;
             }
             return true;
+        }
+
+        private void HandleNavigationExpanded(object sender, RoutedEventArgs e) {
+            TreeViewItem expandedItem = (TreeViewItem)sender;
+
+            if (VerifyConnection() && !expandedItem.HasItems) {
+                ForceCursor = true;
+                Cursor = Cursors.Wait;
+                List<string> objectsToAdd = null;
+                string tag = null;
+                if (expandedItem.Name == "_tablesTreeItem") {
+                    objectsToAdd = _db.GetTables();
+                    tag = "hasColumns";
+                } else if (expandedItem.Name == "_viewsTreeItem") {
+                    objectsToAdd = _db.GetViews();
+                    tag = "hasColumns";
+                } else if (expandedItem.Name == "_procsTreeItem") {
+                    objectsToAdd = _db.GetProcedures();
+                } else if (expandedItem.Tag != null && expandedItem.Tag.Equals("hasColumns")) {
+                    objectsToAdd = _db.GetColumns(tag);
+                    tag = expandedItem.Header.ToString();
+                } else {
+                    Cursor = null;
+                    return;
+                }
+
+                foreach (string objectName in objectsToAdd) {
+                    TreeViewItem newItem = new TreeViewItem();
+                    newItem.Header = objectName;
+                    newItem.Expanded += HandleNavigationExpanded;
+                    newItem.Tag = tag;
+
+                    expandedItem.Items.Add(newItem);
+                }
+            }
+            Cursor = null;
         }
 
         private void HandleSave(object sender, RoutedEventArgs e) {
