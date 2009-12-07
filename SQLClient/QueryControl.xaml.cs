@@ -42,6 +42,21 @@ namespace SQLClient {
         private void HandleQueryBoxKey(object sender, KeyEventArgs e) {
             if (e.Key == Key.F5) {
                 RunQuery();
+            } else if (e.Key == Key.D && Keyboard.Modifiers == ModifierKeys.Control) {
+                string text = _queryTextBox.Text;
+                string[] lines = text.Split('\n');
+                int pos = 0;
+                string lineToDuplicate = string.Empty;
+                foreach(string line in lines) {
+                    pos += line.Length + 1;
+                    if( _queryTextBox.CaretIndex <= pos ) {
+                        lineToDuplicate = line;
+                    }
+                }
+
+                _queryTextBox.AppendText(Environment.NewLine + lineToDuplicate);
+               
+                // TODO: put dup on next line instead of at the end
             }
         }
 
