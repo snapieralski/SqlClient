@@ -198,7 +198,7 @@ namespace SQLClient {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void HandleLoadingRow(object sender, Microsoft.Windows.Controls.DataGridRowEventArgs e) {
-            e.Row.Header = e.Row.GetIndex() + 1;
+            //e.Row.Header = e.Row.GetIndex() + 1;
         }
 
         private void HandleKey(object sender, KeyEventArgs e) {
@@ -208,10 +208,22 @@ namespace SQLClient {
         }
 
         private void HandleRefresh(object sender, RoutedEventArgs e) {
-            TreeViewItem item = (TreeViewItem)sender;
+            MenuItem item = (MenuItem)sender;
 
-            item.Items.Clear();
-            ExpandTreeItem(item);
+            TreeViewItem itemToRefresh = null;
+            if (item.Tag.ToString() == "table") {
+                itemToRefresh = _tablesTreeItem;
+            } else if (item.Tag.ToString() == "view") {
+                itemToRefresh = _viewsTreeItem;
+            } else if (item.Tag.ToString() == "proc") {
+                itemToRefresh = _procsTreeItem;
+            } else {
+                throw new ApplicationException(string.Format("Unrecognized control requested a tree refresh. Tag: '{0}'", item.Tag));
+            }
+
+            itemToRefresh.Items.Clear();
+
+            ExpandTreeItem(itemToRefresh);
         }
     }
 }

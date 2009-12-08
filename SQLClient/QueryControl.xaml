@@ -56,13 +56,13 @@
                         <Image Source="Resources/table.png" Margin="0 0 3 0" />
                         <TextBlock Text="Tables"></TextBlock>
                         <StackPanel.ContextMenu>
-                            <ContextMenu Name="_tablesContextMenu">
+                            <ContextMenu>
                                 <ContextMenu.BitmapEffect>
                                     <OuterGlowBitmapEffect />
                                 </ContextMenu.BitmapEffect>
-                                <MenuItem Header="Refresh" Click="HandleRefresh" >
+                                <MenuItem Header="Refresh" Click="HandleRefresh" Tag="table" >
                                     <MenuItem.Icon>
-                                        <Image Source="refresh.png" />
+                                        <Image Source="Resources/refresh.png" />
                                     </MenuItem.Icon>
                                 </MenuItem>
                             </ContextMenu>
@@ -75,6 +75,18 @@
                     <StackPanel Orientation="Horizontal">
                         <Image Source="Resources/view.png" Margin="0 0 3 0" />
                         <TextBlock Text="Views"></TextBlock>
+                        <StackPanel.ContextMenu>
+                            <ContextMenu>
+                                <ContextMenu.BitmapEffect>
+                                    <OuterGlowBitmapEffect />
+                                </ContextMenu.BitmapEffect>
+                                <MenuItem Header="Refresh" Click="HandleRefresh" Tag="view" >
+                                    <MenuItem.Icon>
+                                        <Image Source="Resources/refresh.png" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </ContextMenu>
+                        </StackPanel.ContextMenu>
                     </StackPanel>
                 </TreeViewItem.Header>
             </TreeViewItem>
@@ -83,6 +95,18 @@
                     <StackPanel Orientation="Horizontal">
                         <Image Source="Resources/procedure.png" Width="16" Margin="0 0 3 0" />
                         <TextBlock Text="Stored Procedures"></TextBlock>
+                        <StackPanel.ContextMenu>
+                            <ContextMenu>
+                                <ContextMenu.BitmapEffect>
+                                    <OuterGlowBitmapEffect />
+                                </ContextMenu.BitmapEffect>
+                                <MenuItem Header="Refresh" Click="HandleRefresh" Tag="proc" >
+                                    <MenuItem.Icon>
+                                        <Image Source="Resources/refresh.png" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </ContextMenu>
+                        </StackPanel.ContextMenu>
                     </StackPanel>
                 </TreeViewItem.Header></TreeViewItem>
         </TreeView>
