@@ -85,31 +85,40 @@ namespace SQLClient.DBInteraction
         public DataSet ExecuteQuery(string query) {
             DataSet result = new DataSet();
 
+            string[] statements = query.Split(';');
+
             try {
                 _conn.Open();
 
-                if (query.ToUpperInvariant().StartsWith("INSERT") || query.ToUpperInvariant().StartsWith("UPDATE") || query.ToUpperInvariant().StartsWith("DELETE")) {
-                    OracleCommand cmd = new OracleCommand(query, _conn);
-                    int itemsAffected = cmd.ExecuteNonQuery();
-                    result.Tables.Add("Update");
-                    result.Tables[0].Columns.Add("Info");
-                    result.Tables[0].Rows.Add(itemsAffected + " rows affected");
-                } else {
-                    OracleDataAdapter dataAdapter = new OracleDataAdapter(query, _conn);
-                    dataAdapter.Fill(result);
-
-                    // if we didn't get any data back
-                    if (result.Tables.Count <= 0) {
-                        result.Tables.Add("Info");
-                        result.Tables[0].Columns.Add("Info");
-                        result.Tables[0].Rows.Add("Query executed successfully but no results were returned.");
+                foreach (string stmt in statements)
+                {
+                    if (stmt.ToUpperInvariant().StartsWith("INSERT") || stmt.ToUpperInvariant().StartsWith("UPDATE") || stmt.ToUpperInvariant().StartsWith("DELETE"))
+                    {
+                        OracleCommand cmd = new OracleCommand(stmt, _conn);
+                        int itemsAffected = cmd.ExecuteNonQuery();
+                        DataTable updateTable = result.Tables.Add("Update");
+                        updateTable.Columns.Add("Info");
+                        updateTable.Rows.Add(itemsAffected + " rows affected");
                     }
-                } 
+                    else
+                    {
+                        OracleDataAdapter dataAdapter = new OracleDataAdapter(stmt, _conn);
+                        dataAdapter.Fill(result);
+
+                        // if we didn't get any data back
+                        if (result.Tables.Count <= 0)
+                        {
+                            DataTable infoTable = result.Tables.Add("Info");
+                            infoTable.Columns.Add("Info");
+                            infoTable.Rows.Add("Query executed successfully but no results were returned.");
+                        }
+                    }
+                }
 
             } catch(OracleException oe) {
-                result.Tables.Add("Error");
-                result.Tables[0].Columns.Add("ErrorInfo");
-                result.Tables[0].Rows.Add(oe.Message);
+                DataTable errorTable = result.Tables.Add("Error");
+                errorTable.Columns.Add("ErrorInfo");
+                errorTable.Rows.Add(oe.Message);
             } finally {
                 _conn.Close();
             }
