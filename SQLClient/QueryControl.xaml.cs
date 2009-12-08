@@ -126,6 +126,10 @@ namespace SQLClient {
         private void HandleNavigationExpanded(object sender, RoutedEventArgs e) {
             TreeViewItem expandedItem = (TreeViewItem)sender;
 
+            ExpandTreeItem(expandedItem);
+        }
+
+        private void ExpandTreeItem(TreeViewItem expandedItem) {
             if (VerifyConnection() && !expandedItem.HasItems) {
                 ForceCursor = true;
                 Cursor = Cursors.Wait;
@@ -201,6 +205,13 @@ namespace SQLClient {
             if (e.Key == Key.S && Keyboard.Modifiers == ModifierKeys.Control) {
                 SaveBuffer();
             }
+        }
+
+        private void HandleRefresh(object sender, RoutedEventArgs e) {
+            TreeViewItem item = (TreeViewItem)sender;
+
+            item.Items.Clear();
+            ExpandTreeItem(item);
         }
     }
 }
