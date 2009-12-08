@@ -140,8 +140,8 @@ namespace SQLClient {
                 } else if (expandedItem.Name == "_procsTreeItem") {
                     objectsToAdd = _db.GetProcedures();
                 } else if (expandedItem.Tag != null && expandedItem.Tag.Equals("hasColumns")) {
-                    objectsToAdd = _db.GetColumns(tag);
                     tag = expandedItem.Header.ToString();
+                    objectsToAdd = _db.GetColumns(tag);
                 } else {
                     Cursor = null;
                     return;

@@ -65,7 +65,13 @@ namespace SQLClient.DBInteraction
                 SqlCommand cmd = new SqlCommand();
                 cmd.Connection = _conn;
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = string.Format("select c.name From syscolumns c inner join sysobjects o on o.id = c.id where o.name = 'ac_auth_filter'", parentName);
+                cmd.CommandText = string.Format(@"select c.name + ' ' +  t.name + '(' + cast(c.length as varchar(10)) + ')' 
+                                                    from syscolumns c 
+                                                    join sysobjects o 
+                                                    	on o.id = c.id 
+                                                    join systypes t
+                                                    	on t.xtype = c.xtype
+                                                    where o.name = '{0}'", parentName);
 
                 SqlDataReader reader = cmd.ExecuteReader();
 
