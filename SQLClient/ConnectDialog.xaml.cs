@@ -46,9 +46,12 @@ namespace SQLClient
         {
             get
             {
-                ConnectionInfo info = _connCtrl.ConnectionInfo;
-                info.Name = ConnectionName;
-                return info;
+                if (_connCtrl != null) {
+                    ConnectionInfo info = _connCtrl.ConnectionInfo;
+                    info.Name = ConnectionName;
+                    return info;
+                }
+                return null;
             }
         }
 

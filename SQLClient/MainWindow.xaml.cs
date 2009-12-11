@@ -37,28 +37,30 @@ namespace SQLClient {
 
             if (dialog.ShowDialog().GetValueOrDefault(false)) {
                 ConnectionInfo info = dialog.ConnectionInfo;
-                if (info.Type == "Oracle") {
-                    _db = new OracleDatabase(info.ConnectionString);
-                } else if (info.Type == "SQL Server") {
-                    _db = new SqlDatabase(info.ConnectionString);
-                } else {
-                    throw new ApplicationException("Unable to connect to DB Type: '" + info.Type + "'");
+                if (info != null) {
+                    if (info.Type == "Oracle") {
+                        _db = new OracleDatabase(info.ConnectionString);
+                    } else if (info.Type == "SQL Server") {
+                        _db = new SqlDatabase(info.ConnectionString);
+                    } else {
+                        throw new ApplicationException("Unable to connect to DB Type: '" + info.Type + "'");
+                    }
+
+                    // get rid of the 'Welcome' tab -- has no effect if we've already removed it
+                    _tabs.Items.Remove(_welcomeTab);
+
+                    TabItem tab = new TabItem();
+                    TextBlock headerText = new TextBlock();
+                    headerText.Text = dialog.ConnectionName;
+                    tab.Header = headerText;
+
+                    QueryControl queryCtrl = new QueryControl();
+                    queryCtrl.Database = _db;
+                    tab.Content = queryCtrl;
+
+                    _tabs.Items.Add(tab);
+                    _tabs.SelectedItem = tab;
                 }
-
-                // get rid of the 'Welcome' tab -- has no effect if we've already removed it
-                _tabs.Items.Remove(_welcomeTab);
-
-                TabItem tab = new TabItem();
-                TextBlock headerText = new TextBlock();
-                headerText.Text = dialog.ConnectionName;
-                tab.Header = headerText;
-
-                QueryControl queryCtrl = new QueryControl();
-                queryCtrl.Database = _db;
-                tab.Content = queryCtrl;
-
-                _tabs.Items.Add(tab);
-                _tabs.SelectedItem = tab;
             }
         }
 

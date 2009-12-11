@@ -70,7 +70,7 @@
                     </StackPanel>
                 </TreeViewItem.Header>
             </TreeViewItem>
-            <TreeViewItem Name="_viewsTreeItem">
+            <TreeViewItem Name="_viewsTreeItem" Expanded="HandleNavigationExpanded">
                 <TreeViewItem.Header>
                     <StackPanel Orientation="Horizontal">
                         <Image Source="Resources/view.png" Margin="0 0 3 0" />
@@ -90,7 +90,7 @@
                     </StackPanel>
                 </TreeViewItem.Header>
             </TreeViewItem>
-            <TreeViewItem Name="_procsTreeItem">
+            <TreeViewItem Name="_procsTreeItem" Expanded="HandleNavigationExpanded">
                 <TreeViewItem.Header>
                     <StackPanel Orientation="Horizontal">
                         <Image Source="Resources/procedure.png" Width="16" Margin="0 0 3 0" />

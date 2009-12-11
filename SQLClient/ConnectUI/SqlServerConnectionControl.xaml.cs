@@ -45,16 +45,16 @@ namespace SQLClient.ConnectUI
             set
             {
                 if (value.Username == "IntegratedAuthentication") {
+                    _usernameTextBox.IsEnabled = false;
+                    _passwordTextBox.IsEnabled = false;
+
+                    _integratedAuthCheckBox.IsChecked = true;
+                } else {
                     _usernameTextBox.Text = value.Username;
                     _passwordTextBox.Text = value.Password;
 
                     _usernameTextBox.IsEnabled = true;
                     _passwordTextBox.IsEnabled = true;
-
-                    _integratedAuthCheckBox.IsChecked = true;
-                } else {
-                    _usernameTextBox.IsEnabled = false;
-                    _passwordTextBox.IsEnabled = false;
 
                     _ssAuthCheckBox.IsChecked = true;
                 }
