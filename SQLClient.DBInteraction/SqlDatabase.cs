@@ -56,6 +56,22 @@ namespace SQLClient.DBInteraction
             return GetDbObjectsAsList("P");
         }
 
+        public List<string> GetTables(string schema) {
+            throw new NotImplementedException();
+        }
+
+        public List<string> GetViews(string schema) {
+            throw new NotImplementedException();
+        }
+
+        public List<string> GetProcedures(string schema) {
+            throw new NotImplementedException();
+        }
+
+        public List<string> GetSchemas() {
+            throw new NotImplementedException();
+        }
+
         public List<string> GetColumns(string parentName) {
             // 
             List<string> objects = new List<string>();
@@ -110,5 +126,8 @@ namespace SQLClient.DBInteraction
             }
             return result;
         }
+
+
+        
     }
 }

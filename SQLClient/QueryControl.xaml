@@ -109,6 +109,26 @@
                         </StackPanel.ContextMenu>
                     </StackPanel>
                 </TreeViewItem.Header></TreeViewItem>
+            <TreeViewItem Name="_schemasTreeItem" Expanded="HandleNavigationExpanded">
+                <TreeViewItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="Resources/app.png" Width="16" Margin="0 0 3 0" />
+                        <TextBlock Text="Schemas"></TextBlock>
+                        <StackPanel.ContextMenu>
+                            <ContextMenu>
+                                <ContextMenu.BitmapEffect>
+                                    <OuterGlowBitmapEffect />
+                                </ContextMenu.BitmapEffect>
+                                <MenuItem Header="Refresh" Click="HandleRefresh" Tag="proc" >
+                                    <MenuItem.Icon>
+                                        <Image Source="Resources/refresh.png" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </ContextMenu>
+                        </StackPanel.ContextMenu>
+                    </StackPanel>
+                </TreeViewItem.Header>
+            </TreeViewItem>
         </TreeView>
         <GridSplitter Width="3" Grid.RowSpan="5" Grid.Row="0" />
 

@@ -143,9 +143,22 @@ namespace SQLClient {
                     tag = "hasColumns";
                 } else if (expandedItem.Name == "_procsTreeItem") {
                     objectsToAdd = _db.GetProcedures();
-                } else if (expandedItem.Tag != null && expandedItem.Tag.Equals("hasColumns")) {
+                } else if (expandedItem.Name == "_schemasTreeItem") {
+                    objectsToAdd = _db.GetSchemas();
+                    tag = "schema";
+                } else if (expandedItem.Tag != null && expandedItem.Tag.ToString().StartsWith("hasColumns")) {
                     tag = expandedItem.Header.ToString();
                     objectsToAdd = _db.GetColumns(tag);
+                } else if (expandedItem.Tag != null && expandedItem.Tag.ToString().StartsWith("sub")) {
+                    string[] data = expandedItem.Tag.ToString().Split(':');
+                    if (data[1] == "table") {
+                        objectsToAdd = _db.GetTables(data[2]);
+                    } else if (data[1] == "view") {
+                        objectsToAdd = _db.GetViews(data[2]);
+                    } else {
+                        objectsToAdd = _db.GetProcedures(data[2]);
+                    }
+                    tag = "hasColumns:" + expandedItem.Header;
                 } else {
                     Cursor = null;
                     return;
@@ -156,11 +169,34 @@ namespace SQLClient {
                     newItem.Header = objectName;
                     newItem.Expanded += HandleNavigationExpanded;
                     newItem.Tag = tag;
+                    if (tag == "schema") {
+                        AddSchemaChildren(newItem);
+                    }
 
                     expandedItem.Items.Add(newItem);
                 }
             }
             Cursor = null;
+        }
+
+        private void AddSchemaChildren(TreeViewItem parent) {
+            TreeViewItem tablesItem = new TreeViewItem();
+            tablesItem.Header = "Tables";
+            tablesItem.Expanded += HandleNavigationExpanded;
+            tablesItem.Tag = "sub:table:" + parent.Header.ToString();
+            parent.Items.Add(tablesItem);
+
+            TreeViewItem viewsItem = new TreeViewItem();
+            viewsItem.Header = "Views";
+            viewsItem.Expanded += HandleNavigationExpanded;
+            viewsItem.Tag = "sub:view:" + parent.Header.ToString();
+            parent.Items.Add(viewsItem);
+
+            TreeViewItem procsItem = new TreeViewItem();
+            procsItem.Header = "Stored Procedures";
+            procsItem.Expanded += HandleNavigationExpanded;
+            procsItem.Tag = "sub:proc:" + parent.Header.ToString();
+            parent.Items.Add(procsItem);
         }
 
         private void HandleSave(object sender, RoutedEventArgs e) {

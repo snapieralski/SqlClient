@@ -14,11 +14,21 @@ namespace SQLClient.DBInteraction
             _conn = new OracleConnection(connectionString);
         }
 
-        public List<string> GetTables() {
-            return GetDbObjectsAsList("TABLE");
-        }
+        
 
         private List<string> GetDbObjectsAsList(string type) {
+            OracleConnectionStringBuilder builder = new OracleConnectionStringBuilder();
+            builder.ConnectionString = _conn.ConnectionString;
+            string userId = builder.UserID.ToUpper();
+
+            return GetDbObjectsAsList(type, userId);
+        }
+
+        private List<string> GetDbObjectsAsList(string type, string userId) {
+            return GetQueryResultsAsList(string.Format("select object_name from all_objects where object_type = '{0}' and owner = '{1}' order by object_name", type, userId));
+        }
+
+        private List<string> GetQueryResultsAsList(string query) {
             List<string> objects = new List<string>();
             try {
                 _conn.Open();
@@ -26,7 +36,8 @@ namespace SQLClient.DBInteraction
                 OracleCommand cmd = new OracleCommand();
                 cmd.Connection = _conn;
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = string.Format("select object_name from user_objects where object_type = '{0}' order by object_name", type);
+
+                cmd.CommandText = query;
 
                 OracleDataReader reader = cmd.ExecuteReader();
 
@@ -38,12 +49,15 @@ namespace SQLClient.DBInteraction
             }
             catch (Exception ex) {
                 objects.Clear();
-                objects.Add(string.Format("Couldn't get {0} info : {1}", type, ex.Message));
+                objects.Add(string.Format("Couldn't get info : {0}", ex.Message));
             }
             finally {
                 _conn.Close();
             }
             return objects;
+        }
+        public List<string> GetTables() {
+            return GetDbObjectsAsList("TABLE");
         }
 
         public List<string> GetViews() {
@@ -52,6 +66,22 @@ namespace SQLClient.DBInteraction
 
         public List<string> GetProcedures() {
             return GetDbObjectsAsList("PROCEDURE");
+        }
+
+        public List<string> GetTables(string schema) {
+            return GetDbObjectsAsList("TABLE", schema);
+        }
+
+        public List<string> GetViews(string schema) {
+            return GetDbObjectsAsList("VIEW", schema);
+        }
+
+        public List<string> GetProcedures(string schema) {
+            return GetDbObjectsAsList("PROCEDURE", schema);
+        }
+
+        public List<string> GetSchemas() {
+            return GetQueryResultsAsList("select username from all_users order by username");
         }
 
         public List<string> GetColumns(string parentName) {
@@ -124,6 +154,12 @@ namespace SQLClient.DBInteraction
             }
             return result;
         }
+
+
+        
+
+
+        
 
     }
 }
