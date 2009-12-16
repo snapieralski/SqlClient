@@ -15,15 +15,20 @@ namespace SQLClient.DBInteraction
             _conn = new SqlConnection(connectionString);
         }
              
-        private List<string> GetDbObjectsAsList(string type) {
+        private List<string> GetDbObjectsAsList(string type, string db) {
+            return GetQueryResultAsList(string.Format("select name from sysobjects where xtype = '{0}' order by name", type), db);
+        }
+
+        private List<string> GetQueryResultAsList(string query, string db) {
             List<string> objects = new List<string>();
             try {
                 _conn.Open();
+                _conn.ChangeDatabase(db);
 
                 SqlCommand cmd = new SqlCommand();
                 cmd.Connection = _conn;
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = string.Format("select name from sysobjects where xtype = '{0}' order by name", type);
+                cmd.CommandText = query;
 
                 SqlDataReader reader = cmd.ExecuteReader();
 
@@ -37,46 +42,60 @@ namespace SQLClient.DBInteraction
                 }
             } catch (Exception ex) {
                 objects.Clear();
-                objects.Add(string.Format("Couldn't get {0} info : {1}", type, ex.Message));
+                objects.Add(string.Format("Couldn't get info : {0}", ex.Message));
             } finally {
                 _conn.Close();
             }
             return objects;
         }
 
+        private String CurrentDb {
+            get {
+                SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
+                builder.ConnectionString = _conn.ConnectionString;
+
+                return builder.InitialCatalog;
+            }
+        }
+
         public List<string> GetTables() {
-            return GetDbObjectsAsList("U");
+            return GetTables(CurrentDb);
         }
 
         public List<string> GetViews() {
-            return GetDbObjectsAsList("V");
+            return GetViews(CurrentDb);
+            
         }
 
         public List<string> GetProcedures() {
-            return GetDbObjectsAsList("P");
+            return GetProcedures(CurrentDb);
         }
 
         public List<string> GetTables(string schema) {
-            throw new NotImplementedException();
+            return GetDbObjectsAsList("U", schema);
         }
 
         public List<string> GetViews(string schema) {
-            throw new NotImplementedException();
+            return GetDbObjectsAsList("V", schema);
         }
 
         public List<string> GetProcedures(string schema) {
-            throw new NotImplementedException();
+            return GetDbObjectsAsList("P", schema);
         }
 
         public List<string> GetSchemas() {
-            throw new NotImplementedException();
+            return GetQueryResultAsList("select name from sys.databases order by name", CurrentDb);
         }
 
         public List<string> GetColumns(string parentName) {
-            // 
+            return GetColumns(parentName, CurrentDb);
+        }
+
+        public List<string> GetColumns(string parentName, string databaseName) {
             List<string> objects = new List<string>();
             try {
                 _conn.Open();
+                _conn.ChangeDatabase(databaseName);
 
                 SqlCommand cmd = new SqlCommand();
                 cmd.Connection = _conn;

@@ -129,36 +129,61 @@ namespace SQLClient {
             ExpandTreeItem(expandedItem);
         }
 
+        private string GetHeaderText(object header) {
+            StackPanel panel = (StackPanel)header;
+
+            foreach (object child in panel.Children) {
+                if (child is TextBlock) {
+                    return ((TextBlock)child).Text;
+                }
+            }
+            return string.Empty;
+        }
+
         private void ExpandTreeItem(TreeViewItem expandedItem) {
             if (VerifyConnection() && !expandedItem.HasItems) {
                 ForceCursor = true;
                 Cursor = Cursors.Wait;
                 List<string> objectsToAdd = null;
                 string tag = null;
+                string icon = null;
                 if (expandedItem.Name == "_tablesTreeItem") {
                     objectsToAdd = _db.GetTables();
                     tag = "hasColumns";
+                    icon = "table.png";
                 } else if (expandedItem.Name == "_viewsTreeItem") {
                     objectsToAdd = _db.GetViews();
                     tag = "hasColumns";
+                    icon = "view.png";
                 } else if (expandedItem.Name == "_procsTreeItem") {
                     objectsToAdd = _db.GetProcedures();
+                    icon = "procedure.png";
                 } else if (expandedItem.Name == "_schemasTreeItem") {
                     objectsToAdd = _db.GetSchemas();
                     tag = "schema";
+                    icon = "database.png";
                 } else if (expandedItem.Tag != null && expandedItem.Tag.ToString().StartsWith("hasColumns")) {
-                    tag = expandedItem.Header.ToString();
-                    objectsToAdd = _db.GetColumns(tag);
+                    string[] data = expandedItem.Tag.ToString().Split(':');
+                    tag = GetHeaderText(expandedItem.Header);
+                    if (data.Length > 1) {
+                        objectsToAdd = _db.GetColumns(tag, data[2]);
+                    } else {
+                        objectsToAdd = _db.GetColumns(tag);
+                    }
+                    icon = "column.png";
                 } else if (expandedItem.Tag != null && expandedItem.Tag.ToString().StartsWith("sub")) {
                     string[] data = expandedItem.Tag.ToString().Split(':');
                     if (data[1] == "table") {
                         objectsToAdd = _db.GetTables(data[2]);
+                        icon = "table.png";
                     } else if (data[1] == "view") {
                         objectsToAdd = _db.GetViews(data[2]);
+                        icon = "view.png";
                     } else {
                         objectsToAdd = _db.GetProcedures(data[2]);
+                        icon = "procedure.png";
                     }
-                    tag = "hasColumns:" + expandedItem.Header;
+                    tag = "hasColumns:" + GetHeaderText(expandedItem.Header) + ":" + data[2];
                 } else {
                     Cursor = null;
                     return;
@@ -166,7 +191,7 @@ namespace SQLClient {
 
                 foreach (string objectName in objectsToAdd) {
                     TreeViewItem newItem = new TreeViewItem();
-                    newItem.Header = objectName;
+                    newItem.Header = BuildHeader(objectName, icon);
                     newItem.Expanded += HandleNavigationExpanded;
                     newItem.Tag = tag;
                     if (tag == "schema") {
@@ -177,6 +202,22 @@ namespace SQLClient {
                 }
             }
             Cursor = null;
+        }
+
+        private StackPanel BuildHeader(string text, string iconName) {
+            StackPanel panel = new StackPanel();
+            panel.Orientation = Orientation.Horizontal;
+
+            Image icon = new Image();
+            icon.Source = System.Windows.Media.Imaging.BitmapFrame.Create(new Uri("pack://application:,,,/SQLClient;component/Resources/" + iconName));
+            icon.Width = 16;
+            panel.Children.Add(icon);
+
+            TextBlock block = new TextBlock();
+            block.Text = text;
+            panel.Children.Add(block);
+
+            return panel;
         }
 
         private void AddSchemaChildren(TreeViewItem parent) {

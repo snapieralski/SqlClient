@@ -53,7 +53,7 @@
             <TreeViewItem Name="_tablesTreeItem" Expanded="HandleNavigationExpanded">
                 <TreeViewItem.Header>
                     <StackPanel Orientation="Horizontal">
-                        <Image Source="Resources/table.png" Margin="0 0 3 0" />
+                        <Image Source="Resources/tables.png" Width="16" Margin="0 0 3 0" />
                         <TextBlock Text="Tables"></TextBlock>
                         <StackPanel.ContextMenu>
                             <ContextMenu>
@@ -73,7 +73,7 @@
             <TreeViewItem Name="_viewsTreeItem" Expanded="HandleNavigationExpanded">
                 <TreeViewItem.Header>
                     <StackPanel Orientation="Horizontal">
-                        <Image Source="Resources/view.png" Margin="0 0 3 0" />
+                        <Image Source="Resources/views.png" Width="16" Margin="0 0 3 0" />
                         <TextBlock Text="Views"></TextBlock>
                         <StackPanel.ContextMenu>
                             <ContextMenu>
@@ -93,7 +93,7 @@
             <TreeViewItem Name="_procsTreeItem" Expanded="HandleNavigationExpanded">
                 <TreeViewItem.Header>
                     <StackPanel Orientation="Horizontal">
-                        <Image Source="Resources/procedure.png" Width="16" Margin="0 0 3 0" />
+                        <Image Source="Resources/procedures.png" Width="16" Margin="0 0 3 0" />
                         <TextBlock Text="Stored Procedures"></TextBlock>
                         <StackPanel.ContextMenu>
                             <ContextMenu>
@@ -112,7 +112,7 @@
             <TreeViewItem Name="_schemasTreeItem" Expanded="HandleNavigationExpanded">
                 <TreeViewItem.Header>
                     <StackPanel Orientation="Horizontal">
-                        <Image Source="Resources/app.png" Width="16" Margin="0 0 3 0" />
+                        <Image Source="Resources/databases.png" Width="16" Margin="0 0 3 0" />
                         <TextBlock Text="Schemas"></TextBlock>
                         <StackPanel.ContextMenu>
                             <ContextMenu>

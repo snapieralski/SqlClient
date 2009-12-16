@@ -10,6 +10,7 @@ namespace SQLClient.DBInteraction {
         List<string> GetViews(string schema);
         List<string> GetProcedures(string schema);
         List<string> GetColumns(string parentName);
+        List<string> GetColumns(string parentName, string schema);
         List<string> GetSchemas();
         DataSet ExecuteQuery(string query);
     }

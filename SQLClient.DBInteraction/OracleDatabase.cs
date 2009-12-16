@@ -17,11 +17,16 @@ namespace SQLClient.DBInteraction
         
 
         private List<string> GetDbObjectsAsList(string type) {
-            OracleConnectionStringBuilder builder = new OracleConnectionStringBuilder();
-            builder.ConnectionString = _conn.ConnectionString;
-            string userId = builder.UserID.ToUpper();
+            return GetDbObjectsAsList(type, CurrentUser);
+        }
 
-            return GetDbObjectsAsList(type, userId);
+        private string CurrentUser {
+            get {
+                OracleConnectionStringBuilder builder = new OracleConnectionStringBuilder();
+                builder.ConnectionString = _conn.ConnectionString;
+                string userId = builder.UserID.ToUpper();
+                return userId;
+            }
         }
 
         private List<string> GetDbObjectsAsList(string type, string userId) {
@@ -85,6 +90,17 @@ namespace SQLClient.DBInteraction
         }
 
         public List<string> GetColumns(string parentName) {
+            return GetColumns(parentName, CurrentUser);
+        }
+
+        private const int COLUMN_NAME = 0;
+        private const int DATA_TYPE = 1;
+        private const int PRECISION = 2;
+        private const int SCALE = 3;
+        private const int CHAR_COL_LEN = 4;
+        private const int NULLABLE = 5;
+
+        public List<string> GetColumns(string parentName, string schema) {
             List<string> objects = new List<string>();
             try {
                 _conn.Open();
@@ -92,12 +108,30 @@ namespace SQLClient.DBInteraction
                 OracleCommand cmd = new OracleCommand();
                 cmd.Connection = _conn;
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = string.Format("select column_name || ' ' || data_type || '(' || data_length || ')' from user_tab_columns where table_name = '{0}'", parentName);
+                cmd.CommandText = string.Format("select column_name, data_type, data_precision, data_scale, char_col_decl_length, nullable from all_tab_columns where table_name = '{0}' and owner = '{1}'", parentName, schema);
 
                 OracleDataReader reader = cmd.ExecuteReader();
 
+                StringBuilder columnText = new StringBuilder();
                 while(reader.Read()) {
-                    objects.Add(reader.GetString(0));
+                    // clear out the last column
+                    if( columnText.Length > 0 ) {
+                        columnText.Remove(0, columnText.Length);
+                    }
+                    // build text for this column
+                    columnText.AppendFormat("{0} {1}", reader.GetString(COLUMN_NAME), reader.GetString(DATA_TYPE));
+                    if (!reader.IsDBNull(PRECISION)) {
+                        columnText.AppendFormat(" ({0}", reader.GetInt32(PRECISION));
+                        if (!reader.IsDBNull(SCALE)) {
+                            columnText.AppendFormat(", {0}", reader.GetInt32(SCALE));
+                        }
+                        columnText.Append(")");
+                    } else if (!reader.IsDBNull(CHAR_COL_LEN)) {
+                        columnText.AppendFormat("({0})", reader.GetInt32(CHAR_COL_LEN));
+                    }
+
+                    columnText.AppendFormat("{0} NULL", reader.GetString(NULLABLE) == "Y" ? string.Empty : " NOT");
+                    objects.Add(columnText.ToString());
                 }
 
                 reader.Close();
