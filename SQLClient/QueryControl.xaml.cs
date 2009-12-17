@@ -49,7 +49,7 @@ namespace SQLClient {
                 string lineToDuplicate = string.Empty;
                 foreach(string line in lines) {
                     pos += line.Length + 1;
-                    if( _queryTextBox.CaretIndex <= pos ) {
+                    if( _queryTextBox.CaretOffset <= pos ) {
                         lineToDuplicate = line;
                     }
                 }

@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:dg="clr-namespace:Microsoft.Windows.Controls;assembly=WPFToolkit" 
+             xmlns:ae="clr-namespace:ICSharpCode.AvalonEdit;assembly=ICSharpCode.AvalonEdit"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="500" KeyDown="HandleKey">
     <UserControl.Resources>
@@ -132,7 +133,7 @@
         </TreeView>
         <GridSplitter Width="3" Grid.RowSpan="5" Grid.Row="0" />
 
-        <TextBox Name="_queryTextBox" FontFamily="Courier New" FontSize="12" Grid.Row="1" Grid.Column="1" KeyUp="HandleQueryBoxKey" AcceptsReturn="True" AcceptsTab="True" AutoWordSelection="True" />
+        <ae:TextEditor Name="_queryTextBox" Background="White" FontFamily="Courier New" FontSize="12" Grid.Row="1" Grid.Column="1" KeyUp="HandleQueryBoxKey" />
         <GridSplitter ResizeDirection="Rows"  Grid.Row="2" Grid.Column="1" Width="Auto" Height="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0"  />
         <dg:DataGrid x:Name="_resultsGrid" ItemsSource="{Binding}" Grid.Row="3" Grid.Column="1" AlternatingRowBackground="#FFDEDEFC" LoadingRow="HandleLoadingRow" />
         <StatusBar Grid.Row="4" Grid.Column="1" >
