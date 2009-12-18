@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.OracleClient;
 using System.Data.SqlClient;
 using System.IO;
+using System.Xml;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -12,6 +13,8 @@ using System.Windows.Input;
 using System.Windows.Media.Animation;
 using Microsoft.Win32;
 using SQLClient.DBInteraction;
+using ICSharpCode.AvalonEdit.Highlighting;
+using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 
 namespace SQLClient {
     /// <summary>
@@ -24,6 +27,14 @@ namespace SQLClient {
         public QueryControl() {
             InitializeComponent();
 
+            Stream xshdStream = System.Reflection.Assembly.GetAssembly(this.GetType()).GetManifestResourceStream("SQLClient.Resources.SQL-Mode.xshd");
+            XmlReader xshdReader = new XmlTextReader(xshdStream);
+
+            XshdSyntaxDefinition def = ICSharpCode.AvalonEdit.Highlighting.Xshd.HighlightingLoader.LoadXshd(xshdReader);
+            
+
+            //_queryTextBox.SyntaxHighlighting = (IHighlightingDefinition)def;
+            
             _queryWorker = new BackgroundWorker();
             _queryWorker.DoWork += DoWorkForQuery;
             _queryWorker.RunWorkerCompleted += HandleQueryWorkerCompleted;

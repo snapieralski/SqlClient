@@ -160,6 +160,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <EmbeddedResource Include="Resources\SQL-Mode.xshd" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SQLClient.DBInteraction\SQLClient.DBInteraction.csproj">
