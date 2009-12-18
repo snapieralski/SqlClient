@@ -14,12 +14,6 @@ namespace SQLClient.DBInteraction
             _conn = new OracleConnection(connectionString);
         }
 
-        
-
-        private List<string> GetDbObjectsAsList(string type) {
-            return GetDbObjectsAsList(type, CurrentUser);
-        }
-
         private string CurrentUser {
             get {
                 OracleConnectionStringBuilder builder = new OracleConnectionStringBuilder();
@@ -61,18 +55,7 @@ namespace SQLClient.DBInteraction
             }
             return objects;
         }
-        public List<string> GetTables() {
-            return GetDbObjectsAsList("TABLE");
-        }
-
-        public List<string> GetViews() {
-            return GetDbObjectsAsList("VIEW");
-        }
-
-        public List<string> GetProcedures() {
-            return GetDbObjectsAsList("PROCEDURE");
-        }
-
+        
         public List<string> GetTables(string schema) {
             return GetDbObjectsAsList("TABLE", schema);
         }
@@ -85,7 +68,7 @@ namespace SQLClient.DBInteraction
             return GetDbObjectsAsList("PROCEDURE", schema);
         }
 
-        public List<string> GetSchemas() {
+        public List<string> GetCatalogs() {
             return GetQueryResultsAsList("select username from all_users order by username");
         }
 

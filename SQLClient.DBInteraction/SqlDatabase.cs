@@ -58,19 +58,6 @@ namespace SQLClient.DBInteraction
             }
         }
 
-        public List<string> GetTables() {
-            return GetTables(CurrentDb);
-        }
-
-        public List<string> GetViews() {
-            return GetViews(CurrentDb);
-            
-        }
-
-        public List<string> GetProcedures() {
-            return GetProcedures(CurrentDb);
-        }
-
         public List<string> GetTables(string schema) {
             return GetDbObjectsAsList("U", schema);
         }
@@ -83,7 +70,7 @@ namespace SQLClient.DBInteraction
             return GetDbObjectsAsList("P", schema);
         }
 
-        public List<string> GetSchemas() {
+        public List<string> GetCatalogs() {
             return GetQueryResultAsList("select name from sys.databases order by name", CurrentDb);
         }
 

@@ -97,6 +97,15 @@
     <Compile Include="ConnectUI\SqlServerConnectionControl.xaml.cs">
       <DependentUpon>SqlServerConnectionControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Model\ITreeItem.cs" />
+    <Compile Include="QueryController.cs" />
+    <Compile Include="Model\Catalog.cs" />
+    <Compile Include="Model\Column.cs" />
+    <Compile Include="Model\DatabaseServer.cs" />
+    <Compile Include="Model\DataContainerBase.cs" />
+    <Compile Include="Model\Procedure.cs" />
+    <Compile Include="Model\Table.cs" />
+    <Compile Include="Model\View.cs" />
     <Compile Include="QueryControl.xaml.cs">
       <DependentUpon>QueryControl.xaml</DependentUpon>
     </Compile>

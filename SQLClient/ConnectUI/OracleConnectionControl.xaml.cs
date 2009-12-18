@@ -33,6 +33,7 @@ namespace SQLClient.ConnectUI
                 info.Server = _serverTextBox.Text;
                 info.Username = _usernameTextBox.Text;
                 info.Password = _passwordTextBox.Text;
+                info.InitialCatalog = info.Username;
                 info.Type = "Oracle";
 
                 return info;

@@ -133,9 +133,9 @@
         </TreeView>
         <GridSplitter Width="3" Grid.RowSpan="5" Grid.Row="0" />
 
-        <ae:TextEditor Name="_queryTextBox" Background="White" FontFamily="Courier New" FontSize="12" Grid.Row="1" Grid.Column="1" KeyUp="HandleQueryBoxKey" />
-        <GridSplitter ResizeDirection="Rows"  Grid.Row="2" Grid.Column="1" Width="Auto" Height="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0"  />
-        <dg:DataGrid x:Name="_resultsGrid" ItemsSource="{Binding}" Grid.Row="3" Grid.Column="1" AlternatingRowBackground="#FFDEDEFC" LoadingRow="HandleLoadingRow" />
+        <ae:TextEditor Name="_queryTextBox" Background="White" ShowLineNumbers="True" FontFamily="Courier New" FontSize="12" Grid.Row="1" Grid.Column="1" KeyUp="HandleQueryBoxKey" />
+        <GridSplitter ResizeDirection="Rows" Grid.Row="2" Grid.Column="1" Width="Auto" Height="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0"  />
+        <dg:DataGrid x:Name="_resultsGrid" SelectionMode="Extended" ItemsSource="{Binding}" Grid.Row="3" Grid.Column="1" AlternatingRowBackground="#FFDEDEFC" LoadingRow="HandleLoadingRow" />
         <StatusBar Grid.Row="4" Grid.Column="1" >
             <TextBlock Width="200" Name="_statusText" />
             <ProgressBar Height="20" Width="100" Name="_statusProgress" />

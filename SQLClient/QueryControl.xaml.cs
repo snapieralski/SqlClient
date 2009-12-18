@@ -2,71 +2,71 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Data.OracleClient;
-using System.Data.SqlClient;
 using System.IO;
-using System.Xml;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
-using Microsoft.Win32;
-using SQLClient.DBInteraction;
-using ICSharpCode.AvalonEdit.Highlighting;
+using System.Windows.Media.Imaging;
+using System.Xml;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
+using Microsoft.Win32;
+using Microsoft.Windows.Controls;
+using SQLClient.Model;
 
 namespace SQLClient {
     /// <summary>
     /// Interaction logic for QueryControl.xaml
     /// </summary>
     public partial class QueryControl : UserControl {
-        private IDatabase _db;
         private readonly BackgroundWorker _queryWorker;
-        
+        private QueryController _controller;
+
         public QueryControl() {
             InitializeComponent();
 
-            Stream xshdStream = System.Reflection.Assembly.GetAssembly(this.GetType()).GetManifestResourceStream("SQLClient.Resources.SQL-Mode.xshd");
-            XmlReader xshdReader = new XmlTextReader(xshdStream);
-
-            XshdSyntaxDefinition def = ICSharpCode.AvalonEdit.Highlighting.Xshd.HighlightingLoader.LoadXshd(xshdReader);
-            
-
-            //_queryTextBox.SyntaxHighlighting = (IHighlightingDefinition)def;
-            
+            Stream xshdStream =
+                Assembly.GetAssembly(GetType()).GetManifestResourceStream("SQLClient.Resources.SQL-Mode.xshd");
+            if (xshdStream != null) {
+                XmlReader xshdReader = new XmlTextReader(xshdStream);
+                _queryTextBox.SyntaxHighlighting = HighlightingLoader.Load(xshdReader, null);
+            }
             _queryWorker = new BackgroundWorker();
             _queryWorker.DoWork += DoWorkForQuery;
             _queryWorker.RunWorkerCompleted += HandleQueryWorkerCompleted;
             _queryWorker.WorkerSupportsCancellation = true;
         }
 
-        public IDatabase Database {
-            get {
-                return _db;
-            }
+        public QueryController Controller {
+            get { return _controller; }
             set {
-                _db = value;
+                _controller = value;
+                _tablesTreeItem.Tag = _controller.Server.DefaultCatalog;
+                _viewsTreeItem.Tag = _controller.Server.DefaultCatalog;
+                _procsTreeItem.Tag = _controller.Server.DefaultCatalog;
             }
         }
-        
+
         private void HandleQueryBoxKey(object sender, KeyEventArgs e) {
             if (e.Key == Key.F5) {
                 RunQuery();
-            } else if (e.Key == Key.D && Keyboard.Modifiers == ModifierKeys.Control) {
+            }
+            else if (e.Key == Key.D && Keyboard.Modifiers == ModifierKeys.Control) {
                 string text = _queryTextBox.Text;
                 string[] lines = text.Split('\n');
                 int pos = 0;
                 string lineToDuplicate = string.Empty;
-                foreach(string line in lines) {
+                foreach (string line in lines) {
                     pos += line.Length + 1;
-                    if( _queryTextBox.CaretOffset <= pos ) {
+                    if (_queryTextBox.CaretOffset <= pos) {
                         lineToDuplicate = line;
                     }
                 }
 
                 _queryTextBox.AppendText(Environment.NewLine + lineToDuplicate);
-               
+
                 // TODO: put dup on next line instead of at the end
             }
         }
@@ -76,28 +76,26 @@ namespace SQLClient {
         }
 
         private void RunQuery() {
-            if (VerifyConnection()) {
-                _queryTextBox.Focus(); // we have to focus the query box to make SelectedText work
+            _queryTextBox.Focus(); // we have to focus the query box to make SelectedText work
 
-                string queryText = _queryTextBox.SelectedText;
-                if (queryText == string.Empty) {
-                    queryText = _queryTextBox.Text;
-                }
-
-                _statusText.Text = "Running Query";
-                _cancelButton.IsEnabled = true;
-
-                DoubleAnimation anim = new DoubleAnimation(100.0, new Duration(TimeSpan.FromSeconds(5)));
-                anim.RepeatBehavior = RepeatBehavior.Forever;
-                _statusProgress.BeginAnimation(RangeBase.ValueProperty, anim);
-
-                _queryWorker.RunWorkerAsync(queryText);
+            string queryText = _queryTextBox.SelectedText;
+            if (queryText == string.Empty) {
+                queryText = _queryTextBox.Text;
             }
+
+            _statusText.Text = "Running Query";
+            _cancelButton.IsEnabled = true;
+
+            DoubleAnimation anim = new DoubleAnimation(100.0, new Duration(TimeSpan.FromSeconds(5)));
+            anim.RepeatBehavior = RepeatBehavior.Forever;
+            _statusProgress.BeginAnimation(RangeBase.ValueProperty, anim);
+
+            _queryWorker.RunWorkerAsync(queryText);
         }
 
         private void DoWorkForQuery(object sender, DoWorkEventArgs e) {
-            string queryToRun = (string)e.Argument;
-            DataSet result = _db.ExecuteQuery(queryToRun);
+            string queryToRun = (string) e.Argument;
+            DataSet result = Controller.GetQueryResult(queryToRun);
 
             e.Result = result;
         }
@@ -105,11 +103,13 @@ namespace SQLClient {
         private void HandleQueryWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
             if (e.Error != null) {
                 // TODO: display error info
-            } else if (!e.Cancelled) {
-                DataSet result = (DataSet)e.Result;
+            }
+            else if (!e.Cancelled) {
+                DataSet result = (DataSet) e.Result;
                 if (result.Tables.Count > 0) {
                     _resultsGrid.DataContext = result.Tables[0].DefaultView;
-                } else {
+                }
+                else {
                     MessageBox.Show("Query completed but no data was returned.", "Something weird happened.",
                                     MessageBoxButton.OK, MessageBoxImage.Information);
                 }
@@ -120,93 +120,68 @@ namespace SQLClient {
         }
 
         private void HandleCancel(object sender, RoutedEventArgs e) {
-            Button button = (Button)sender;
-            
             _queryWorker.CancelAsync();
         }
 
-        private bool VerifyConnection() {
-            if (_db == null) {
-                MessageBox.Show("How do you expect to run a query when you aren't connected?", "Hey Dummy!",
-                                MessageBoxButton.OK, MessageBoxImage.Hand);
-                return false;
-            }
-            return true;
-        }
-
         private void HandleNavigationExpanded(object sender, RoutedEventArgs e) {
-            TreeViewItem expandedItem = (TreeViewItem)sender;
+            TreeViewItem expandedItem = (TreeViewItem) sender;
 
             ExpandTreeItem(expandedItem);
         }
 
-        private string GetHeaderText(object header) {
-            StackPanel panel = (StackPanel)header;
+        private static string GetHeaderText(object header) {
+            StackPanel panel = (StackPanel) header;
 
             foreach (object child in panel.Children) {
                 if (child is TextBlock) {
-                    return ((TextBlock)child).Text;
+                    return ((TextBlock) child).Text;
                 }
             }
             return string.Empty;
         }
 
         private void ExpandTreeItem(TreeViewItem expandedItem) {
-            if (VerifyConnection() && !expandedItem.HasItems) {
+            if (!expandedItem.HasItems) {
                 ForceCursor = true;
                 Cursor = Cursors.Wait;
-                List<string> objectsToAdd = null;
-                string tag = null;
+                List<ITreeItem> objectsToAdd = null;
                 string icon = null;
-                if (expandedItem.Name == "_tablesTreeItem") {
-                    objectsToAdd = _db.GetTables();
-                    tag = "hasColumns";
-                    icon = "table.png";
-                } else if (expandedItem.Name == "_viewsTreeItem") {
-                    objectsToAdd = _db.GetViews();
-                    tag = "hasColumns";
-                    icon = "view.png";
-                } else if (expandedItem.Name == "_procsTreeItem") {
-                    objectsToAdd = _db.GetProcedures();
-                    icon = "procedure.png";
-                } else if (expandedItem.Name == "_schemasTreeItem") {
-                    objectsToAdd = _db.GetSchemas();
-                    tag = "schema";
-                    icon = "database.png";
-                } else if (expandedItem.Tag != null && expandedItem.Tag.ToString().StartsWith("hasColumns")) {
-                    string[] data = expandedItem.Tag.ToString().Split(':');
-                    tag = GetHeaderText(expandedItem.Header);
-                    if (data.Length > 1) {
-                        objectsToAdd = _db.GetColumns(tag, data[2]);
-                    } else {
-                        objectsToAdd = _db.GetColumns(tag);
-                    }
-                    icon = "column.png";
-                } else if (expandedItem.Tag != null && expandedItem.Tag.ToString().StartsWith("sub")) {
-                    string[] data = expandedItem.Tag.ToString().Split(':');
-                    if (data[1] == "table") {
-                        objectsToAdd = _db.GetTables(data[2]);
+                if (expandedItem.Tag != null && ((ITreeItem)expandedItem.Tag).TreeItemType == TreeItemType.Catalog) {
+                    Catalog catalog = (Catalog) expandedItem.Tag;
+                    if (GetHeaderText(expandedItem.Header) == "Tables") {
+                        objectsToAdd = _controller.GetTables(catalog);
                         icon = "table.png";
-                    } else if (data[1] == "view") {
-                        objectsToAdd = _db.GetViews(data[2]);
+                    }
+                    else if (GetHeaderText(expandedItem.Header) == "Views") {
+                        objectsToAdd = _controller.GetViews(catalog);
                         icon = "view.png";
-                    } else {
-                        objectsToAdd = _db.GetProcedures(data[2]);
+                    }
+                    else {
+                        objectsToAdd = _controller.GetProcedures(catalog);
                         icon = "procedure.png";
                     }
-                    tag = "hasColumns:" + GetHeaderText(expandedItem.Header) + ":" + data[2];
+                }
+                else if (expandedItem.Name == "_schemasTreeItem") {
+                    objectsToAdd = _controller.GetCatalogs();
+                    icon = "database.png";
+                } else if (expandedItem.Tag != null &&
+                           (((ITreeItem)expandedItem.Tag).TreeItemType == TreeItemType.Table ||
+                            ((ITreeItem)expandedItem.Tag).TreeItemType == TreeItemType.View)) {
+                    objectsToAdd = _controller.GetColumns((DataContainerBase)expandedItem.Tag);
+                    icon = "column.png";
                 } else {
                     Cursor = null;
                     return;
                 }
 
-                foreach (string objectName in objectsToAdd) {
+                foreach (ITreeItem item in objectsToAdd) {
                     TreeViewItem newItem = new TreeViewItem();
-                    newItem.Header = BuildHeader(objectName, icon);
+                    newItem.Header = BuildHeader(item.Name, icon);
                     newItem.Expanded += HandleNavigationExpanded;
-                    newItem.Tag = tag;
-                    if (tag == "schema") {
-                        AddSchemaChildren(newItem);
+                    newItem.Tag = item;
+
+                    if (item.TreeItemType == TreeItemType.Catalog) {
+                        AddSchemaChildren(newItem, item);
                     }
 
                     expandedItem.Items.Add(newItem);
@@ -215,12 +190,12 @@ namespace SQLClient {
             Cursor = null;
         }
 
-        private StackPanel BuildHeader(string text, string iconName) {
+        private static StackPanel BuildHeader(string text, string iconName) {
             StackPanel panel = new StackPanel();
             panel.Orientation = Orientation.Horizontal;
 
             Image icon = new Image();
-            icon.Source = System.Windows.Media.Imaging.BitmapFrame.Create(new Uri("pack://application:,,,/SQLClient;component/Resources/" + iconName));
+            icon.Source = BitmapFrame.Create(new Uri("pack://application:,,,/SQLClient;component/Resources/" + iconName));
             icon.Width = 16;
             panel.Children.Add(icon);
 
@@ -231,23 +206,23 @@ namespace SQLClient {
             return panel;
         }
 
-        private void AddSchemaChildren(TreeViewItem parent) {
+        private void AddSchemaChildren(TreeViewItem parent, ITreeItem item) {
             TreeViewItem tablesItem = new TreeViewItem();
-            tablesItem.Header = "Tables";
+            tablesItem.Header = BuildHeader("Tables", "tables.png");
             tablesItem.Expanded += HandleNavigationExpanded;
-            tablesItem.Tag = "sub:table:" + parent.Header.ToString();
+            tablesItem.Tag = item;
             parent.Items.Add(tablesItem);
 
             TreeViewItem viewsItem = new TreeViewItem();
-            viewsItem.Header = "Views";
+            viewsItem.Header = BuildHeader("Views", "views.png");
             viewsItem.Expanded += HandleNavigationExpanded;
-            viewsItem.Tag = "sub:view:" + parent.Header.ToString();
+            viewsItem.Tag = item;
             parent.Items.Add(viewsItem);
 
             TreeViewItem procsItem = new TreeViewItem();
-            procsItem.Header = "Stored Procedures";
+            procsItem.Header = BuildHeader("Procedures", "procedures.png");
             procsItem.Expanded += HandleNavigationExpanded;
-            procsItem.Tag = "sub:proc:" + parent.Header.ToString();
+            procsItem.Tag = item;
             parent.Items.Add(procsItem);
         }
 
@@ -273,11 +248,11 @@ namespace SQLClient {
             openDialog.Filter = "SQL documents (.sql)|*.sql|All Files (*.*)|*";
 
             bool? result = openDialog.ShowDialog();
-            if( result == true ) {
+            if (result == true) {
                 string filename = openDialog.FileName;
 
                 _queryTextBox.Text = File.ReadAllText(filename);
-            } 
+            }
         }
 
         /// <summary>
@@ -285,7 +260,7 @@ namespace SQLClient {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void HandleLoadingRow(object sender, Microsoft.Windows.Controls.DataGridRowEventArgs e) {
+        private void HandleLoadingRow(object sender, DataGridRowEventArgs e) {
             //e.Row.Header = e.Row.GetIndex() + 1;
         }
 
@@ -296,17 +271,21 @@ namespace SQLClient {
         }
 
         private void HandleRefresh(object sender, RoutedEventArgs e) {
-            MenuItem item = (MenuItem)sender;
+            MenuItem item = (MenuItem) sender;
 
             TreeViewItem itemToRefresh = null;
             if (item.Tag.ToString() == "table") {
                 itemToRefresh = _tablesTreeItem;
-            } else if (item.Tag.ToString() == "view") {
+            }
+            else if (item.Tag.ToString() == "view") {
                 itemToRefresh = _viewsTreeItem;
-            } else if (item.Tag.ToString() == "proc") {
+            }
+            else if (item.Tag.ToString() == "proc") {
                 itemToRefresh = _procsTreeItem;
-            } else {
-                throw new ApplicationException(string.Format("Unrecognized control requested a tree refresh. Tag: '{0}'", item.Tag));
+            }
+            else {
+                throw new ApplicationException(string.Format(
+                                                   "Unrecognized control requested a tree refresh. Tag: '{0}'", item.Tag));
             }
 
             itemToRefresh.Items.Clear();
