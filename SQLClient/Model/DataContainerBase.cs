@@ -1,14 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.Windows.Media;
+using ICSharpCode.AvalonEdit.Document;
+using ICSharpCode.AvalonEdit.Editing;
 
 namespace SQLClient.Model {
-    public abstract class DataContainerBase : ITreeItem {
+    public abstract class DataContainerBase : CompletionDataBase, ITreeItem {
         private readonly List<Column> _columns;
-        private readonly string _name;
         private readonly Catalog _parent;
 
         public DataContainerBase(string name, Catalog parent) {
-            _name = name;
+            Name = name;
             _columns = new List<Column>();
             _parent = parent;
         }
@@ -21,10 +23,9 @@ namespace SQLClient.Model {
             get { return _columns; }
         }
 
-        public string Name {
-            get { return _name; }
-        }
-
         public abstract TreeItemType TreeItemType { get; }
+
+
+        
     }
 }

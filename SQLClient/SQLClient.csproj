@@ -97,6 +97,7 @@
     <Compile Include="ConnectUI\SqlServerConnectionControl.xaml.cs">
       <DependentUpon>SqlServerConnectionControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Model\CompletionDataBase.cs" />
     <Compile Include="Model\ITreeItem.cs" />
     <Compile Include="QueryController.cs" />
     <Compile Include="Model\Catalog.cs" />
