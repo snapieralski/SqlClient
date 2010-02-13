@@ -28,8 +28,8 @@ namespace SQLClient {
     public partial class QueryControl : UserControl {
         private readonly BackgroundWorker _queryWorker;
         private QueryController _controller;
-        private CompletionWindow _completionWindow;
-        private bool _keepCompletionsOpen;
+        //private CompletionWindow _completionWindow;
+        //private bool _keepCompletionsOpen;
 
         public QueryControl() {
             InitializeComponent();
@@ -45,77 +45,75 @@ namespace SQLClient {
             _queryWorker.RunWorkerCompleted += HandleQueryWorkerCompleted;
             _queryWorker.WorkerSupportsCancellation = true;
 
-            _queryTextBox.TextArea.TextEntered += HandleTextEntered;
-            _queryTextBox.TextArea.TextEntering += HandleTextEntering;
-
-            
+            //_queryTextBox.TextArea.TextEntered += HandleTextEntered;
+            //_queryTextBox.TextArea.TextEntering += HandleTextEntering;
         }
 
-        private void HandleTextEntering(object sender, TextCompositionEventArgs e) {
-            string prevWord = string.Empty;
-            if (e.Text == " ") {
-                int offset = _queryTextBox.CaretOffset;
+        //private void HandleTextEntering(object sender, TextCompositionEventArgs e) {
+        //    string prevWord = string.Empty;
+        //    if (e.Text == " ") {
+        //        int offset = _queryTextBox.CaretOffset;
 
-                // get the previous word
-                string textToCaret = _queryTextBox.Text.Substring(0, offset).Trim();
+        //        // get the previous word
+        //        string textToCaret = _queryTextBox.Text.Substring(0, offset).Trim();
                 
-                if (textToCaret != string.Empty) {
-                    prevWord = textToCaret.Substring(textToCaret.LastIndexOf(" ") + 1);
-                }
-            }
+        //        if (textToCaret != string.Empty) {
+        //            prevWord = textToCaret.Substring(textToCaret.LastIndexOf(" ") + 1);
+        //        }
+        //    }
 
-            _completionWindow = new CompletionWindow(_queryTextBox.TextArea);
-            if(prevWord.Equals("from", StringComparison.CurrentCultureIgnoreCase)
-                || prevWord.Equals("join", StringComparison.CurrentCultureIgnoreCase)) {
+        //    _completionWindow = new CompletionWindow(_queryTextBox.TextArea);
+        //    if(prevWord.Equals("from", StringComparison.CurrentCultureIgnoreCase)
+        //        || prevWord.Equals("join", StringComparison.CurrentCultureIgnoreCase)) {
                 
-                foreach(ICompletionData data in _controller.Server.DefaultCatalog.Tables) {
-                    _completionWindow.CompletionList.CompletionData.Add(data);
-                }
-                foreach(ICompletionData data in _controller.Server.DefaultCatalog.Views) {
-                    _completionWindow.CompletionList.CompletionData.Add(data);
-                }
-                foreach(ICompletionData data in _controller.Server.Catalogs) {
-                    _completionWindow.CompletionList.CompletionData.Add(data);
-                }
-            } else if(prevWord.Equals("select", StringComparison.CurrentCultureIgnoreCase) 
-                || prevWord.Equals("where", StringComparison.CurrentCultureIgnoreCase)
-                || prevWord.Equals("or", StringComparison.CurrentCultureIgnoreCase)
-                || prevWord.Equals("and", StringComparison.CurrentCultureIgnoreCase)
-                || prevWord.Equals("<", StringComparison.CurrentCultureIgnoreCase)
-                || prevWord.Equals(">", StringComparison.CurrentCultureIgnoreCase)
-                || prevWord.Equals("<>", StringComparison.CurrentCultureIgnoreCase)
-                || prevWord.Equals("=", StringComparison.CurrentCultureIgnoreCase)) {
-                foreach(Table t in _controller.Server.DefaultCatalog.Tables) {
-                    t.Columns.ForEach(c => _completionWindow.CompletionList.CompletionData.Add(c));
-                }
-                foreach (View v in _controller.Server.DefaultCatalog.Views) {
-                    v.Columns.ForEach(c => _completionWindow.CompletionList.CompletionData.Add(c));
-                }
-            }
+        //        foreach(ICompletionData data in _controller.Server.DefaultCatalog.Tables) {
+        //            _completionWindow.CompletionList.CompletionData.Add(data);
+        //        }
+        //        foreach(ICompletionData data in _controller.Server.DefaultCatalog.Views) {
+        //            _completionWindow.CompletionList.CompletionData.Add(data);
+        //        }
+        //        foreach(ICompletionData data in _controller.Server.Catalogs) {
+        //            _completionWindow.CompletionList.CompletionData.Add(data);
+        //        }
+        //    } else if(prevWord.Equals("select", StringComparison.CurrentCultureIgnoreCase) 
+        //        || prevWord.Equals("where", StringComparison.CurrentCultureIgnoreCase)
+        //        || prevWord.Equals("or", StringComparison.CurrentCultureIgnoreCase)
+        //        || prevWord.Equals("and", StringComparison.CurrentCultureIgnoreCase)
+        //        || prevWord.Equals("<", StringComparison.CurrentCultureIgnoreCase)
+        //        || prevWord.Equals(">", StringComparison.CurrentCultureIgnoreCase)
+        //        || prevWord.Equals("<>", StringComparison.CurrentCultureIgnoreCase)
+        //        || prevWord.Equals("=", StringComparison.CurrentCultureIgnoreCase)) {
+        //        foreach(Table t in _controller.Server.DefaultCatalog.Tables) {
+        //            t.Columns.ForEach(c => _completionWindow.CompletionList.CompletionData.Add(c));
+        //        }
+        //        foreach (View v in _controller.Server.DefaultCatalog.Views) {
+        //            v.Columns.ForEach(c => _completionWindow.CompletionList.CompletionData.Add(c));
+        //        }
+        //    }
 
-            // don't open the window if we don't have anything to show
-            if (_completionWindow.CompletionList.CompletionData.Count > 0) {
-                _completionWindow.Show();
-                _completionWindow.Closed += delegate {
-                    _completionWindow = null;
-                };
-                _keepCompletionsOpen = true;
-            } else {
-                _completionWindow = null;
-            }
-        }
+        //    // don't open the window if we don't have anything to show
+        //    if (_completionWindow.CompletionList.CompletionData.Count > 0) {
+        //        _completionWindow.Show();
+        //        _completionWindow.Closed += delegate {
+        //            _completionWindow = null;
+        //        };
+        //        _keepCompletionsOpen = true;
+        //    } else {
+        //        _completionWindow = null;
+        //    }
+        //}
 
-        private void HandleTextEntered(object sender, TextCompositionEventArgs e) {
-            if (!_keepCompletionsOpen) {
-                if (e.Text.Length > 0 && _completionWindow != null && !char.IsLetterOrDigit(e.Text[0])) {
-                    // Whenever a non-letter is typed while the completion window is open,
-                    // insert the currently selected element.
-                    _completionWindow.CompletionList.RequestInsertion(e);
-                }
-            } else {
-                _keepCompletionsOpen = false;
-            }
-        }
+        //private void HandleTextEntered(object sender, TextCompositionEventArgs e) {
+        //    if (!_keepCompletionsOpen) {
+        //        if (e.Text.Length > 0 && _completionWindow != null && !char.IsLetterOrDigit(e.Text[0])) {
+        //            // Whenever a non-letter is typed while the completion window is open,
+        //            // insert the currently selected element.
+        //            _completionWindow.CompletionList.RequestInsertion(e);
+        //        }
+        //    } else {
+        //        _keepCompletionsOpen = false;
+        //    }
+        //}
 
         public QueryController Controller {
             get { return _controller; }
