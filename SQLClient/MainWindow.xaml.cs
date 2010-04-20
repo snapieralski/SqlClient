@@ -23,7 +23,6 @@ namespace SQLClient {
 
         private void HandleConnect(object sender, RoutedEventArgs e) {
             ConnectDialog dialog = new ConnectDialog();
-
             if (dialog.ShowDialog().GetValueOrDefault(false)) {
                 ConnectionInfo info = dialog.ConnectionInfo;
                 if (info != null) {
@@ -63,7 +62,6 @@ namespace SQLClient {
 
         private void HandleLoad(object sender, RoutedEventArgs e)
         {
-            
         }
     }
 }

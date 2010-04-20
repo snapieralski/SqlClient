@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:dg="clr-namespace:Microsoft.Windows.Controls;assembly=WpfToolkit"
     Title="SQL Client" Height="652" Width="1134" Icon="/SQLClient;component/Resources/app.png" 
-        Loaded="HandleLoad" Background="CornflowerBlue" WindowState="Normal">
+    Loaded="HandleLoad" Background="CornflowerBlue" WindowState="Normal">
     
     <Window.Resources>
         <Style x:Key="disabledImageStyle" TargetType="{x:Type Image}">

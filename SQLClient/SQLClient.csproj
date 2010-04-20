@@ -97,6 +97,9 @@
     <Compile Include="ConnectUI\SqlServerConnectionControl.xaml.cs">
       <DependentUpon>SqlServerConnectionControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="FindDialog.xaml.cs">
+      <DependentUpon>FindDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Model\CompletionDataBase.cs" />
     <Compile Include="Model\ITreeItem.cs" />
     <Compile Include="QueryController.cs" />
@@ -121,6 +124,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ConnectUI\SqlServerConnectionControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="FindDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
